@@ -19,10 +19,10 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->string('nama_kue', 128);
             $table->integer('harga');
-            $table->integer('strok');
+            $table->integer('stok');
             $table->text('deskripsi')->nullable();
-            $table->string('gambar',255)->nullable();
-            
+            $table->string('gambar', 255)->nullable();
+
             $table->timestamps();
         });
     }
