@@ -2,10 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
-
-Route::get('/', function () {
-    return view('welcome');
-});
+//halaman home
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/catalog', [App\Http\Controllers\HomeController::class, 'catalog'])->name('catalog');
 
 
 //login

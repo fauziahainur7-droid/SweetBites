@@ -16,7 +16,7 @@ class ProductController extends Controller
     {
         $products = Product::with('category')->get();
 
-        return view('Products.index', compact('products'));
+        return view('admin.Products.index', compact('products'));
     }
 
     /**
@@ -26,7 +26,7 @@ class ProductController extends Controller
     {
         $categories = Category::all();
 
-        return view('products.create', compact('categories'));
+        return view('admin.products.create', compact('categories'));
     }
 
     /**
@@ -65,7 +65,7 @@ class ProductController extends Controller
     {
         $product = Product::with('category', 'reviews.user')->findOrFail($id);
 
-        return view('products.show', compact('product'));
+        return view('admin.products.show', compact('product'));
     }
 
     /**
@@ -76,7 +76,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
         $categories = Category::all();
 
-        return view('product.edit', compact('product', 'categories'));
+        return view('admin.products.edit', compact('product', 'categories'));
     }
 
     /**
