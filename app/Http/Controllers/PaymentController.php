@@ -10,111 +10,170 @@ use Illuminate\Support\Facades\Storage;
 
 class PaymentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // ADMIN: daftar pembayaran
     public function index()
     {
-        $payments = Payment::with('order.user')->get();
+        $payments = Payment::with('order.user')
+            ->latest()
+            ->get();
 
-        return view('payment.index', compact('payments'));
+        return view(
+            'admin.payments.index',
+            compact('payments')
+        );
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    // CUSTOMER: halaman konfirmasi pembayaran
+    public function confirmation(int $order_id)
     {
-        //
+        $order = Order::where('user_id', Auth::id())
+            ->with('payment')
+            ->findOrFail($order_id);
+
+        return view(
+            'user.payment.confirmation',
+            compact('order')
+        );
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // CUSTOMER: menyimpan bukti pembayaran
     public function store(Request $request)
     {
         $data = $request->validate([
             'order_id' => 'required|exists:orders,id',
             'metode_pembayaran' => 'required|string',
-            'total_pembayaran' => 'required|integer|min:0',
-            'bukti_pembayaran' => 'nullable|image|mimes:jepg,png,jpg|max:2048',
+            'total_bayar' => 'required|numeric|min:0',
+            'bukti_pembayaran' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        //cek order punya pelanggan yng login
-        $order = Order::where('user_id',Auth::id())
-            ->where('id',$data['order_id'])
+        $order = Order::where('user_id', Auth::id())
+            ->where('id', $data['order_id'])
+            ->with('payment')
             ->firstOrFail();
 
-        //cek orderannya udah di bayar belum
+        // COD tidak membutuhkan bukti pembayaran
+        if ($order->metode_pembayaran === 'COD') {
+            return back()->with(
+                'error',
+                'Pesanan COD tidak perlu upload bukti pembayaran.'
+            );
+        }
+
+        // Cek apakah pembayaran sudah pernah dibuat
         if ($order->payment) {
-            return back()->with('error','pembayaran sudah pernah dibuat');
-        }
-        
-        //status awal
-        $data['status'] = 'Menunggu';
-
-        //upload bukti pembayaran
-        if ($request->hasFile('bukti_pembayaran')) {
-            $file = $request->file('bukti_pembayaran');
-            $filename = 'payment-' . time() . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('public/payments', $filename);
-            $data['bukti_pembayaran'] = $filename;
+            return back()->with(
+                'error',
+                'Pembayaran untuk pesanan ini sudah pernah dibuat.'
+            );
         }
 
+        // Upload bukti pembayaran
+        $file = $request->file('bukti_pembayaran');
+
+        $filename = 'payment-' .
+            time() .
+            '.' .
+            $file->getClientOriginalExtension();
+
+        $file->storeAs(
+            'payments',
+            $filename,
+            'public'
+        );
+
+        $data['bukti_pembayaran'] = $filename;
+
+        // Status awal pembayaran
+        $data['status'] = 'menunggu';
+
+        // Simpan pembayaran
         Payment::create($data);
 
-        return redirect()->route('order.index')
-            ->with('success','pembayaran berhasil dicatat!Menunggu verivikasi admin.');
+        return redirect()
+            ->route('orders.index')
+            ->with(
+                'success',
+                'Bukti pembayaran berhasil dikirim. Menunggu verifikasi admin.'
+            );
     }
 
-    /**
-     * Display the specified resource.
-     */
+    // ADMIN: menampilkan file bukti pembayaran
+    public function proof(string $id)
+    {
+        $payment = Payment::findOrFail($id);
+
+        if (!$payment->bukti_pembayaran) {
+            abort(404, 'Bukti pembayaran belum tersedia.');
+        }
+
+        $path = Storage::disk('public')->path(
+            'payments/' . $payment->bukti_pembayaran
+        );
+
+        if (!file_exists($path)) {
+            abort(
+                404,
+                'File bukti pembayaran tidak ditemukan di storage.'
+            );
+        }
+
+        return response()->file($path);
+    }
+
+    // ADMIN: detail pembayaran
     public function show(string $id)
     {
-        //
+        $payment = Payment::with('order.user')
+            ->findOrFail($id);
+
+        return view(
+            'admin.payments.show',
+            compact('payment')
+        );
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function updateStatus(Request $request, string $id)
-    {
-        //validasi status
+    // ADMIN: update status pembayaran
+    public function updateStatus(
+        Request $request,
+        string $id
+    ) {
         $request->validate([
-            'status' => 'required|in:menunggu,verifikasi,lunas,gagal'
+            'status' => 'required|in:menunggu,verifikasi,lunas,gagal',
         ]);
 
-        //cari bayar berdasarkan id
         $payment = Payment::findOrFail($id);
-        
-        //update status
+
         $payment->update([
             'status' => $request->status,
         ]);
 
-        //kalo lunas,update status order jg
+        // Jika pembayaran lunas, pesanan menjadi diproses
         if ($request->status === 'lunas') {
-            $payment->order->update(['status' => 'diproses']);
+            $payment->order->update([
+                'status' => 'diproses',
+            ]);
         }
 
-        return redirect()->route('payments.index')
-            ->with('success', 'Status pembayaran berhasil diperbarui!');
+        return redirect()
+            ->route('admin.payments.index')
+            ->with(
+                'success',
+                'Status pembayaran berhasil diperbarui!'
+            );
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    // ADMIN: menghapus pembayaran
     public function destroy(string $id)
     {
-        //
+        $payment = Payment::findOrFail($id);
+
+        $payment->delete();
+
+        return redirect()
+            ->route('admin.payments.index')
+            ->with(
+                'success',
+                'Data pembayaran berhasil dihapus.'
+            );
     }
 }

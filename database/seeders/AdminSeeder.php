@@ -2,23 +2,36 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\Admin;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Support\Facades\Hash;
 
 class AdminSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        Admin::updateOrCreate(
-            ['email' => 'admin@sweetbites.com'],
+        // Membuat akun admin di tabel users
+        $user = User::updateOrCreate(
             [
-                'name' => 'Admin',
-                'password' => Hash::make('admin123'),
+                'email' => 'admin@sweetbites.com'
+            ],
+            [
+                'name' => 'Admin SweetBites',
+                'password' => Hash::make('admin12345'),
+                'no_hp' => '081234567890',
+                'alamat' => 'SweetBites',
+            ]
+        );
+
+        // Membuat data admin di tabel admins
+        Admin::updateOrCreate(
+            [
+                'email' => 'admin@sweetbites.com'
+            ],
+            [
+                'name' => 'Admin SweetBites',
+                'password' => Hash::make('admin12345'),
             ]
         );
     }

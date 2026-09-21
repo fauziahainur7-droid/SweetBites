@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 class CartController extends Controller
 {
     /**
@@ -15,7 +16,7 @@ class CartController extends Controller
     {
         $carts = Cart::where('user_id', Auth::id())->get();
 
-        return view('cart.index',compact('carts'));
+        return view('user.cart.index', compact('carts'));
     }
 
     /**
@@ -24,7 +25,7 @@ class CartController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'product_id' =>'required|exists:products,id',
+            'product_id' => 'required|exists:products,id',
             'jumlah' => 'required|integer|min:1',
         ]);
 
@@ -47,7 +48,7 @@ class CartController extends Controller
             Cart::create($data);
         }
 
-        return redirect()->route('cart.index')
+        return redirect()->route('catalog')
             ->with('success', 'Produk ditambahkan ke keranjang!');
     }
 

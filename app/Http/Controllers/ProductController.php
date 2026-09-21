@@ -9,19 +9,17 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // ADMIN - daftar produk
     public function index()
     {
-        $products = Product::with('category')->get();
+        $products = Product::with('category')
+            ->latest()
+            ->paginate(10);
 
-        return view('admin.Products.index', compact('products'));
+        return view('admin.products.index', compact('products'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // ADMIN - form tambah
     public function create()
     {
         $categories = Category::all();
@@ -29,9 +27,7 @@ class ProductController extends Controller
         return view('admin.products.create', compact('categories'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // ADMIN - simpan produk
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -39,123 +35,115 @@ class ProductController extends Controller
             'nama_kue' => 'required|string|max:128',
             'harga' => 'required|integer|min:0',
             'stok' => 'required|integer|min:0',
-            'deskripsi' => 'nullable',
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg|mas:5000',
+            'deskripsi' => 'nullable|string',
+            'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // upload gambar
         if ($request->hasFile('gambar')) {
+
             $file = $request->file('gambar');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('public/products', $filename);
+
+            $filename = time() . '.' .
+                $file->getClientOriginalExtension();
+
+            $file->storeAs(
+                'public/products',
+                $filename
+            );
+
             $data['gambar'] = $filename;
         }
 
-        // Simpan ke database
         Product::create($data);
 
-        return redirect()->route('products.index')
+        return redirect()
+            ->route('admin.products.index')
             ->with('success', 'Produk berhasil ditambahkan!');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // PUBLIC - detail produk
+    public function show(int $id)
     {
-        $product = Product::with('category', 'reviews.user')->findOrFail($id);
+        $product = \App\Models\Product::findOrFail($id);
 
-        return view('admin.products.show', compact('product'));
+        $reviews = \App\Models\Review::with('user')
+            ->where('produk_id', $product->id)
+            ->latest()
+            ->get();
+
+        return view('user.products.show', compact('product', 'reviews'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    // ADMIN - form edit
+    public function edit(int $id)
     {
         $product = Product::findOrFail($id);
+
         $categories = Category::all();
 
-        return view('admin.products.edit', compact('product', 'categories'));
+        return view(
+            'admin.products.edit',
+            compact('product', 'categories')
+        );
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    // ADMIN - update
+    public function update(Request $request, int $id)
     {
-        $product = Product::find($id);
+        $product = Product::findOrFail($id);
 
         $data = $request->validate([
             'kategori_id' => 'required|exists:categories,id',
             'nama_kue' => 'required|string|max:128',
             'harga' => 'required|integer|min:0',
             'stok' => 'required|integer|min:0',
-            'deskripsi' => 'nullable',
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg|mas:5000',
+            'deskripsi' => 'nullable|string',
+            'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        //upload gambar baru
         if ($request->hasFile('gambar')) {
-            // Hapus gambar lama 
+
             if ($product->gambar) {
-                Storage::delete('public/products/' . $product->gambar);
+                Storage::delete(
+                    'public/products/' . $product->gambar
+                );
             }
 
-            // Upload gambar baru
             $file = $request->file('gambar');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('public/products', $filename);
+
+            $filename = time() . '.' .
+                $file->getClientOriginalExtension();
+
+            $file->storeAs(
+                'public/products',
+                $filename
+            );
+
             $data['gambar'] = $filename;
         }
 
-
         $product->update($data);
 
-        return redirect()->route('products.index')
-            ->with('success', 'produk berhasil diperbarui!');
+        return redirect()
+            ->route('admin.products.index')
+            ->with('success', 'Produk berhasil diperbarui!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    // ADMIN - hapus
+    public function destroy(int $id)
     {
         $product = Product::findOrFail($id);
 
-        //hapus gambar storage
         if ($product->gambar) {
-            Storage::delete('public/products/' . $product->gambar);
+            Storage::delete(
+                'public/products/' . $product->gambar
+            );
         }
 
-        // Hapus data produk
         $product->delete();
 
-        return redirect()->route('products.index')
+        return redirect()
+            ->route('admin.products.index')
             ->with('success', 'Produk berhasil dihapus!');
-    }
-
-    public function catalog(Request $request)
-    {
-        // buat produk yang stoknya > 0
-        $query = Product::with('category')->where('stok', '>', 0);
-
-        // Filter pencarian berdasarkan nama
-        if ($request->has('search') && $request->search) {
-            $query->where('nama_kue', 'like', '%' . $request->search . '%');
-        }
-
-        // Filter berdasarkan kategori
-        if ($request->has('category') && $request->category) {
-            $query->where('kategori_id', $request->category);
-        }
-
-        // Ambil data dengan pagination (12 per halaman)
-        $products = $query->paginate(12);
-
-        // Ambil semua kategori untuk filter
-        $categories = Category::all();
-
-        return view('user.products.catalog', compact('products', 'categories'));
     }
 }

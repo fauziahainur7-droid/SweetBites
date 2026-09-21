@@ -4,53 +4,124 @@ namespace App\Http\Controllers;
 
 use App\Models\Report;
 use App\Models\Order;
+use App\Models\OrderDetail;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class ReportController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan laporan dan statistik
      */
-    public function index()
+    public function index(Request $request)
     {
-        $reports = Report::orderBy('created_at', 'desc')->get();
+        // Ambil bulan yang dipilih
+        // Kalau belum memilih, gunakan bulan sekarang
+        $bulan = $request->bulan ?? date('Y-m');
 
-        // Statistik ringkasan
-        $totalOrders = Order::count(); // Total semua pesanan
-        $totalRevenue = Order::where('status', 'selesai')->sum('total_harga'); // Total pendapatan
+        $tanggalMulai = Carbon::createFromFormat(
+            'Y-m',
+            $bulan
+        )->startOfMonth();
 
-        return view('reports.index', compact('reports', 'totalOrders', 'totalRevenue'));
+        $tanggalSelesai = Carbon::createFromFormat(
+            'Y-m',
+            $bulan
+        )->endOfMonth();
+
+        // Ambil semua pesanan pada bulan yang dipilih
+        $orders = Order::with('user')
+            ->whereBetween('created_at', [
+                $tanggalMulai,
+                $tanggalSelesai
+            ])
+            ->latest()
+            ->get();
+
+        // Total pesanan
+        $totalOrders = $orders->count();
+
+        // Total pendapatan
+        // Hanya pesanan yang sudah selesai
+        $totalRevenue = $orders
+            ->where('status', 'selesai')
+            ->sum('total_harga');
+
+        // Jumlah pelanggan yang melakukan pesanan
+        $totalCustomers = $orders
+            ->pluck('user_id')
+            ->unique()
+            ->count();
+
+        // Kue terlaris pada bulan yang dipilih
+        $bestSeller = OrderDetail::with('product')
+            ->whereHas('order', function ($query) use (
+                $tanggalMulai,
+                $tanggalSelesai
+            ) {
+                $query->whereBetween('created_at', [
+                    $tanggalMulai,
+                    $tanggalSelesai
+                ]);
+            })
+            ->selectRaw('produk_id, SUM(jumlah) as total_terjual')
+            ->groupBy('produk_id')
+            ->orderByDesc('total_terjual')
+            ->first();
+
+        // Data report yang sudah digenerate
+        $reports = Report::orderBy(
+            'created_at',
+            'desc'
+        )->get();
+
+        return view(
+            'admin.reports.index',
+            compact(
+                'reports',
+                'orders',
+                'totalOrders',
+                'totalRevenue',
+                'totalCustomers',
+                'bestSeller',
+                'bulan'
+            )
+        );
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Generate laporan
      */
     public function generate(Request $request)
     {
-         $data = $request->validate([
+        $data = $request->validate([
             'judul' => 'required|string|max:128',
             'periode_mulai' => 'required|date',
-            'periode_selesai' => 'required|date|after_or_equal:perioe_mulai',
+            'periode_selesai' => 'required|date|after_or_equal:periode_mulai',
         ]);
 
-        // Hitung total penjualan di periode yang dipilih
+        // Hitung total penjualan pada periode
         $totalPenjualan = Order::whereBetween('created_at', [
             $data['periode_mulai'],
             Carbon::parse($data['periode_selesai'])->endOfDay()
-        ])->where('status', 'selesai')
+        ])
+        ->where('status', 'selesai')
         ->sum('total_harga');
 
         $data['total_penjualan'] = $totalPenjualan;
 
         Report::create($data);
 
-        return redirect()->route('reports.index')
-            ->with('success','Laporan berhasil digenerate!');
+        return redirect()
+            ->route('admin.reports.index')
+            ->with(
+                'success',
+                'Laporan berhasil digenerate!'
+            );
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store
      */
     public function store(Request $request)
     {
@@ -58,15 +129,20 @@ class ReportController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Detail laporan
      */
     public function show(string $id)
     {
-        //
+        $report = Report::findOrFail($id);
+
+        return view(
+            'admin.reports.show',
+            compact('report')
+        );
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Edit
      */
     public function edit(string $id)
     {
@@ -74,15 +150,17 @@ class ReportController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update
      */
-    public function update(Request $request, string $id)
-    {
+    public function update(
+        Request $request,
+        string $id
+    ) {
         //
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Hapus laporan
      */
     public function destroy(string $id)
     {
@@ -90,7 +168,11 @@ class ReportController extends Controller
 
         $report->delete();
 
-        return redirect()->route('reports.index')
-            ->with('success','Laporan berhasil dihapus!');
+        return redirect()
+            ->route('admin.reports.index')
+            ->with(
+                'success',
+                'Laporan berhasil dihapus!'
+            );
     }
 }
