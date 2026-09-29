@@ -10,17 +10,17 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Ambil produk populer (rating tertinggi atau terbaru)
-        $popularProducts = Product::with('category')
+        // Ambil produk populer
+        $products = Product::with('category')
             ->where('stok', '>', 0)
             ->orderBy('created_at', 'desc')
-            ->limit(4)
+            ->limit(8)
             ->get();
 
         // Ambil semua kategori dengan jumlah produk
         $categories = Category::withCount('products')->get();
 
-        return view('home', compact('popularProducts', 'categories'));
+        return view('home', compact('products', 'categories'));
     }
 
     public function catalog(Request $request)
@@ -35,7 +35,7 @@ class HomeController extends Controller
             $query->where('kategori_id', $request->category);
         }
 
-        $products = $query->paginate(8);
+        $products = $query->paginate(16);
         $categories = Category::all();
 
         return view('catalog', compact('products', 'categories'));

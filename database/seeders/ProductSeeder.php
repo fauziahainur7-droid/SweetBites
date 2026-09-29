@@ -9,7 +9,7 @@ class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        // ===== KATEGORI 1: COOKIES (5 produk) =====
+        // KATEGORI 1: COOKIES (5 produk)
         Product::create([
             'kategori_id' => 1,
             'nama_kue' => 'Choco Chip Sea Salt Cookies',
@@ -55,7 +55,7 @@ class ProductSeeder extends Seeder
             'gambar' => null,
         ]);
 
-        // ===== KATEGORI 2: BROWNIES (5 produk) =====
+        //  KATEGORI 2: BROWNIES (5 produk)
         Product::create([
             'kategori_id' => 2,
             'nama_kue' => 'Fudgy Brownies Premium',
@@ -101,7 +101,7 @@ class ProductSeeder extends Seeder
             'gambar' => null,
         ]);
 
-        // ===== KATEGORI 3: PASTRY (5 produk) =====
+        //  KATEGORI 3: PASTRY (5 produk)
         Product::create([
             'kategori_id' => 3,
             'nama_kue' => 'Pain Au Chocolat',
@@ -147,7 +147,7 @@ class ProductSeeder extends Seeder
             'gambar' => null,
         ]);
 
-        // ===== KATEGORI 4: DESSERT BOX (5 produk) =====
+        // KATEGORI 4: DESSERT BOX (5 produk)
         Product::create([
             'kategori_id' => 4,
             'nama_kue' => 'Oreo Cheesecake Box',
@@ -193,7 +193,7 @@ class ProductSeeder extends Seeder
             'gambar' => null,
         ]);
 
-        // ===== KATEGORI 5: CUPCAKE (5 produk) =====
+        //KATEGORI 5: CUPCAKE (5 produk)
         Product::create([
             'kategori_id' => 5,
             'nama_kue' => 'Caramel Latte Cupcake',

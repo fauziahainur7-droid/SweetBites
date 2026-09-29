@@ -4,49 +4,18 @@
 
 @section('content')
 
-<div class="container mt-4 mb-5">
+<div class="cart-page">
 
-    <h2 class="mb-4">Keranjang Belanja</h2>
+    <h1 class="text-center cart-title">Shoping Cart</h1>
 
-    {{-- PESANAN BERHASIL --}}
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
+    <form action="{{ route('checkout.index') }}" method="GET">
+        <div class="cart-layout">
 
-    {{-- ERROR --}}
-    @if(session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
+            {{-- KIRI: DAFTAR PRODUK --}}
+            <div class="cart-left">
 
-    @if($carts->isEmpty())
-
-        <div class="alert alert-secondary">
-            Keranjang kamu masih kosong.
-        </div>
-
-        <a href="{{ route('catalog') }}" class="btn btn-dark">
-            Belanja Sekarang
-        </a>
-
-    @else
-
-        {{-- DAFTAR PRODUK --}}
-        <div class="card mb-4">
-
-            <div class="card-header">
-                <strong>Daftar Produk</strong>
-            </div>
-
-            <div class="card-body">
-
-                <div class="table-responsive">
-
-                    <table class="table align-middle">
-
+                <div class="cart-table-wrapper">
+                    <table class="cart-table">
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -57,239 +26,183 @@
                                 <th>Aksi</th>
                             </tr>
                         </thead>
-
                         <tbody>
-
-                            @php
-                                $total = 0;
-                            @endphp
-
-                            @foreach($carts as $cart)
-
-                                @php
-                                    $subtotal = $cart->product->harga * $cart->jumlah;
-                                    $total += $subtotal;
-                                @endphp
-
+                            @forelse($carts as $i => $cart)
                                 <tr>
-
+                                    <td>{{ $i + 1 }}</td>
                                     <td>
-                                        {{ $loop->iteration }}
+                                        <div class="cart-product">
+                                            <img src="{{ asset('images/' . $cart->product->gambar) }}"
+                                                 alt="{{ $cart->product->nama_kue }}"
+                                                 class="cart-product-img">
+                                            <div>
+                                                <strong>{{ $cart->product->nama_kue }}</strong>
+                                                <small>{{ $cart->product->category->nama_kategori ?? '' }}</small>
+                                            </div>
+                                        </div>
                                     </td>
-
+                                    <td>Rp{{ number_format($cart->product->harga, 0, ',', '.') }}</td>
                                     <td>
-                                        {{ $cart->product->nama_kue }}
-                                    </td>
-
-                                    <td>
-                                        Rp {{ number_format($cart->product->harga, 0, ',', '.') }}
-                                    </td>
-
-                                    <td>
-
-                                        <form
-                                            action="{{ route('cart.update', $cart->id) }}"
-                                            method="POST"
-                                            class="d-flex"
-                                        >
-
+                                        {{-- Form update jumlah --}}
+                                        <form action="{{ route('cart.update', $cart->id) }}"
+                                              method="POST"
+                                              class="cart-qty-form">
                                             @csrf
                                             @method('PUT')
-
-                                            <input
-                                                type="number"
-                                                name="jumlah"
-                                                value="{{ $cart->jumlah }}"
-                                                min="1"
-                                                max="{{ $cart->product->stok }}"
-                                                class="form-control"
-                                                style="width: 90px;"
-                                            >
-
-                                            <button
-                                                type="submit"
-                                                class="btn btn-secondary ms-2"
-                                            >
-                                                Update
-                                            </button>
-
+                                            <div class="cart-qty">
+                                                <button type="button" class="qty-btn qty-minus">−</button>
+                                                <input type="number"
+                                                       name="jumlah"
+                                                       value="{{ $cart->jumlah }}"
+                                                       min="1"
+                                                       max="{{ $cart->product->stok }}"
+                                                       class="qty-input">
+                                                <button type="button" class="qty-btn qty-plus">+</button>
+                                            </div>
+                                            <button type="submit" class="qty-update-btn">Update</button>
                                         </form>
-
                                     </td>
-
                                     <td>
-                                        Rp {{ number_format($subtotal, 0, ',', '.') }}
+                                        <strong>
+                                            Rp{{ number_format($cart->product->harga * $cart->jumlah, 0, ',', '.') }}
+                                        </strong>
                                     </td>
-
                                     <td>
-
-                                        <form
-                                            action="{{ route('cart.destroy', $cart->id) }}"
-                                            method="POST"
-                                            onsubmit="return confirm('Hapus produk ini dari keranjang?')"
-                                        >
-
+                                        {{-- Form hapus (method DELETE) --}}
+                                        <form action="{{ route('cart.destroy', $cart->id) }}"
+                                              method="POST"
+                                              class="cart-remove-form"
+                                              onsubmit="return confirm('Hapus produk ini?')">
                                             @csrf
                                             @method('DELETE')
-
-                                            <button
-                                                type="submit"
-                                                class="btn btn-danger"
-                                            >
-                                                Hapus
+                                            <button type="submit"
+                                                    class="btn-remove-x"
+                                                    title="Hapus produk">
+                                                <i class="bi bi-x-lg"></i>
                                             </button>
-
                                         </form>
-
                                     </td>
-
                                 </tr>
-
-                            @endforeach
-
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="cart-empty">
+                                        <i class="bi bi-cart-x" style="font-size: 48px; color: var(--gray-text);"></i>
+                                        <p>Keranjang kamu masih kosong</p>
+                                        <a href="{{ route('catalog') }}" class="btn-shop-now">Mulai Belanja</a>
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
-
                     </table>
-
                 </div>
 
-                <div class="text-end mt-3">
+                @if($carts->count() > 0)
+                    @php
+                        $total = $carts->sum(fn($c) => $c->product->harga * $c->jumlah);
+                    @endphp
 
-                    <h4>
-                        Total:
-                        Rp {{ number_format($total, 0, ',', '.') }}
-                    </h4>
-
-                </div>
+                    {{-- Total di kiri bawah tabel --}}
+                    <div class="cart-total-left">
+                        <span>Total</span>
+                        <strong>Rp{{ number_format($total, 0, ',', '.') }}</strong>
+                    </div>
+                @endif
 
             </div>
 
-        </div>
+            {{-- KANAN: INFORMASI PEMESANAN--}}
+            <div class="cart-right">
 
+                <div class="cart-info-card">
+                    <h3>Informasi Pemesanan</h3>
 
-        {{-- PILIHAN PESANAN --}}
-        <div class="card">
-
-            <div class="card-header">
-                <strong>Informasi Pemesanan</strong>
-            </div>
-
-            <div class="card-body">
-
-                <form
-                    action="{{ route('checkout.index') }}"
-                    method="GET"
-                >
-
-                    {{-- ALAMAT --}}
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            Alamat Pengiriman
-                        </label>
-
-                        <textarea
-                            name="alamat"
-                            class="form-control"
-                            rows="3"
-                            required
-                        >{{ auth()->user()->alamat }}</textarea>
-
+                    {{-- Alamat Pengiriman --}}
+                    <div class="form-group">
+                        <label>Alamat Pengiriman</label>
+                        <textarea name="alamat"
+                                  rows="4"
+                                  class="form-control"
+                                  placeholder="Tulis alamat lengkap pengiriman..."
+                                  required>{{ old('alamat', auth()->user()->alamat ?? '') }}</textarea>
                     </div>
 
-
-                    {{-- METODE PENGIRIMAN --}}
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            Metode Pengiriman
-                        </label>
-
-                        <select
-                            name="metode_pengiriman"
-                            id="metode_pengiriman"
-                            class="form-control"
-                            required
-                        >
-
-                            <option value="">
-                                -- Pilih Metode Pengiriman --
+                    {{-- Metode Pengiriman --}}
+                    <div class="form-group">
+                        <label>Metode Pengiriman</label>
+                        <select name="metode_pengiriman" class="form-control" required>
+                            <option value="">-- Pilih Metode Pengiriman --</option>
+                            <option value="ambil_di_toko" {{ old('metode_pengiriman') == 'ambil_di_toko' ? 'selected' : '' }}>
+                                Ambil di Toko 
                             </option>
-
-                            <option value="Diantar">
-                                Diantar
+                            <option value="jne" {{ old('metode_pengiriman') == 'jne' ? 'selected' : '' }}>
+                                Dikirim Tim SwettBites
                             </option>
-
-                            <option value="Ambil Sendiri">
-                                Ambil Sendiri
-                            </option>
-
                         </select>
-
                     </div>
 
-
-                    {{-- METODE PEMBAYARAN --}}
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            Metode Pembayaran
-                        </label>
-
-                        <select
-                            name="metode_pembayaran"
-                            class="form-control"
-                            required
-                        >
-
-                            <option value="">
-                                -- Pilih Metode Pembayaran --
+                    {{-- Metode Pembayaran --}}
+                    <div class="form-group">
+                        <label>Metode Pembayaran</label>
+                        <select name="metode_pembayaran" class="form-control" required>
+                            <option value="">-- Pilih Metode Pembayaran --</option>
+                            <option value="transfer_bca" {{ old('metode_pembayaran') == 'transfer_bca' ? 'selected' : '' }}>
+                                Bank Transfer (BCA / Mandiri / BRI)
                             </option>
-
-                            <option value="Bank Transfer">
-                                Bank Transfer (BCA/Mandiri/BRI)
+                            <option value="transfer_mandiri" {{ old('metode_pembayaran') == 'transfer_mandiri' ? 'selected' : '' }}>
+                                E-Wallet (OVO / Gopay / DANA)
                             </option>
-
-                            <option value="E-Wallet">
-                                E-Wallet
-                            </option>
-
-                            <option value="COD">
+                            <option value="cod" {{ old('metode_pembayaran') == 'cod' ? 'selected' : '' }}>
                                 COD (Bayar di Tempat)
                             </option>
-
                         </select>
-
                     </div>
 
+                    {{-- Divider --}}
+                    <hr class="cart-divider">
 
-                    {{-- TOMBOL --}}
-                    <div class="mt-4">
-
-                        <button
-                            type="submit"
-                            class="btn btn-dark"
-                        >
+                    {{-- Tombol Aksi --}}
+                    <div class="cart-actions-buttons">
+                        <button type="submit"
+                                class="btn-checkout"
+                                {{ $carts->count() == 0 ? 'disabled' : '' }}>
                             Lanjut ke Checkout
                         </button>
 
-                        <a
-                            href="{{ route('catalog') }}"
-                            class="btn btn-secondary"
-                        >
+                        <a href="{{ route('catalog') }}" class="btn-back-shop-dark">
                             Kembali Belanja
                         </a>
-
                     </div>
 
-                </form>
+                </div>
 
             </div>
 
         </div>
-
-    @endif
+    </form>
 
 </div>
+
+{{-- Script tombol + / − --}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.cart-qty').forEach(function (wrapper) {
+        const minusBtn = wrapper.querySelector('.qty-minus');
+        const plusBtn = wrapper.querySelector('.qty-plus');
+        const input = wrapper.querySelector('.qty-input');
+
+        minusBtn.addEventListener('click', function () {
+            let val = parseInt(input.value) || 1;
+            if (val > 1) input.value = val - 1;
+        });
+
+        plusBtn.addEventListener('click', function () {
+            let val = parseInt(input.value) || 1;
+            let max = parseInt(input.getAttribute('max')) || 999;
+            if (val < max) input.value = val + 1;
+        });
+    });
+});
+</script>
+
 
 @endsection

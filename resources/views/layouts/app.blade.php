@@ -6,19 +6,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>SweetBites - @yield('title', 'Toko Kue')</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- CSS SweetBites -->
+    <link rel="stylesheet"
+        href="{{ asset('css/style.css') }}">
+
 </head>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.bar-item .bar').forEach(function (el) {
+        var h = el.getAttribute('data-height');
+        if (h) el.style.height = h + '%';
+    });
+
+    document.querySelectorAll('.donut').forEach(function (el) {
+        var g = el.getAttribute('data-gradient');
+        if (g) el.style.background = 'conic-gradient(' + g + ')';
+    });
+
+    document.querySelectorAll('.donut-legend-item .dot').forEach(function (el) {
+        var c = el.getAttribute('data-color');
+        if (c) el.style.backgroundColor = c;
+    });
+
+    document.querySelectorAll('.line-point .dot-point').forEach(function (el) {
+        var o = el.getAttribute('data-offset');
+        if (o) el.style.marginBottom = o + '%';
+    });
+});
+</script>
 
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-sweetbites">
+        <div class="container ">
 
-            <a class="navbar-brand fw-bold" href="{{ route('home') }}">
-                SweetBites
+            <a class="navbar-brand fw-bold d-flex align-items-center"
+                href="{{ route('home') }}">
+
+                <img src="{{ asset('images/logotoko1.png') }}"
+                    alt="Logo SweetBites"
+                    class="logo-sweetbites">
+
+                <span>SweetBites</span>
+
             </a>
-
             <button class="navbar-toggler"
                 type="button"
                 data-bs-toggle="collapse"
@@ -28,7 +67,7 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
 
-                <ul class="navbar-nav me-auto">
+                <ul class="navbar-nav navbar-menu">
 
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('home') }}">
@@ -95,7 +134,7 @@
 
                 </ul>
 
-                <ul class="navbar-nav">
+                <ul class="navbar-nav navbar-right">
 
                     @guest
 
@@ -176,15 +215,85 @@
 
 
     {{-- ISI HALAMAN --}}
-    <div class="container mt-4">
-
         @yield('content')
 
-    </div>
+    {{-- FOOTER --}}
 
+    @if (!request()->is('admin/*'))
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <footer class="footer">
 
+            <div class="footer-box">
+
+                <div class="sweet-footer-content">
+
+                    <!-- SweetBites -->
+                    <div class="sweet-footer-column sweet-footer-brand">
+
+                        <h3>SweetBites</h3>
+
+                        <p>
+                            Homemade bakery<br>
+                            dengan rasa premium<br>
+                            dan dibuat fresh<br>
+                            setiap hari.
+                        </p>
+
+                    </div>
+
+                    <!-- Navigasi -->
+                    <div class="sweet-footer-column">
+
+                        <h3>Navigasi</h3>
+
+                        <div class="sweet-footer-line"></div>
+
+                        <a href="{{ route('home') }}">
+                            Beranda
+                        </a>
+
+                        <a href="{{ route('catalog') }}">
+                            Katalog
+                        </a>
+
+                        <a href="{{ route('about') }}">
+                            Tentang Kami
+                        </a>
+
+                        <a href="{{ route('contact') }}">
+                            Kontak
+                        </a>
+
+                    </div>
+
+                    <!-- Hubungi Kami -->
+                    <div class="sweet-footer-column">
+
+                        <h3>Hubungi Kami</h3>
+
+                        <div class="sweet-footer-line"></div>
+
+                        <p>📍 Purbalingga</p>
+                        <p>📞 08xx-xxx</p>
+                        <p>✉️ sweetbites@gmail.com</p>
+
+                    </div>
+
+                </div>
+
+                <!-- Tulisan besar -->
+                <div class="footer-brand">
+                    SWEETBITES
+                </div>
+
+            </div>
+
+        </footer>
+
+    @endif
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

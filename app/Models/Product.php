@@ -23,7 +23,7 @@ class Product extends Model
         return $this->belongsTo(Category::class, 'kategori_id');
     }
 
-    public function OrderDetails()
+    public function orderDetails()
     {
         return $this->hasMany(OrderDetail::class, 'produk_id');
     }

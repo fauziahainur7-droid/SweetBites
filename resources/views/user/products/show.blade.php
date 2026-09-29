@@ -6,7 +6,7 @@
 
 <a href="{{ route('catalog') }}"
    class="btn btn-secondary mb-3">
-    ← Kembali ke Katalog
+     Kembali ke Katalog
 </a>
 
 <div class="card">
@@ -18,7 +18,6 @@
             <div class="col-md-5">
 
                 @if($product->gambar)
-
                     <img
                         src="{{ asset('storage/products/' . $product->gambar) }}"
                         class="img-fluid rounded"

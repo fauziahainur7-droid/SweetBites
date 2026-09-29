@@ -4,186 +4,147 @@
 
 @section('content')
 
-<h2>Katalog Kue</h2>
+<section class="katalog-section">
 
-<form action="{{ route('catalog') }}" method="GET" class="row mb-3">
+    <div class="container">
 
-    <div class="col-md-4">
-        <input
-            type="text"
-            name="search"
-            class="form-control"
-            placeholder="Cari kue..."
-            value="{{ request('search') }}"
-        >
-    </div>
+        <!-- HEADER -->
+        <div class="katalog-heading">
 
-    <div class="col-md-4">
-        <select name="category" class="form-control">
+            <span class="katalog-label">
+                SWEETBITES PÂTISSERIE & COOKIES BAR
+            </span>
 
-            <option value="">
-                Semua Kategori
-            </option>
+            <h1 class="katalog-title">
+                Katalog Kue
+            </h1>
 
-            @foreach($categories ?? [] as $cat)
+            <p class="katalog-subtitle">
+                Temukan berbagai pilihan kue favorit SweetBites
+                yang dibuat fresh dengan bahan berkualitas.
+            </p>
 
-                <option
-                    value="{{ $cat->id }}"
-                    {{ request('category') == $cat->id ? 'selected' : '' }}
-                >
-                    {{ $cat->nama_kategori }}
-                </option>
-
-            @endforeach
-
-        </select>
-    </div>
-
-    <div class="col-md-4">
-
-        <button
-            type="submit"
-            class="btn btn-dark"
-        >
-            Cari
-        </button>
-
-        <a
-            href="{{ route('catalog') }}"
-            class="btn btn-secondary"
-        >
-            Reset
-        </a>
-
-    </div>
-
-</form>
+        </div>
 
 
-<div class="row">
+        <!-- PENCARIAN -->
+        <div class="katalog-filter-box">
 
-    @forelse($products ?? [] as $product)
+            <div class="katalog-search-wrapper">
 
-        <div class="col-md-3 mb-3">
+                <input
+                    type="text"
+                    class="katalog-search"
+                    placeholder="Cari kue favoritmu...">
 
-            <div class="card h-100">
+            </div>
 
-                <div class="card-body">
 
-                    <h5>
+            <select class="katalog-select">
+
+                <option>Semua Kategori</option>
+
+                <option>Cookies</option>
+
+                <option>Brownies</option>
+
+                <option>Pastry</option>
+
+                <option>Dessert Box</option>
+
+                <option>Cupcake</option>
+
+            </select>
+
+
+            <button type="button" class="katalog-btn">
+                Cari
+            </button>
+
+
+            <button type="button"
+                class="katalog-btn katalog-btn-reset">
+                Reset
+            </button>
+
+        </div>
+
+
+        <!-- PRODUK -->
+        <div class="katalog-grid">
+
+            @foreach($products as $product)
+
+            <div class="katalog-card">
+
+                <!-- GAMBAR -->
+                <div class="katalog-image">
+
+                    <img
+                        src="{{ asset('images/' . $product->gambar) }}"
+                        alt="{{ $product->nama_kue }}">
+
+                </div>
+
+
+                <!-- ISI -->
+                <div class="katalog-body">
+
+                    <h3 class="katalog-nama">
                         {{ $product->nama_kue }}
-                    </h5>
+                    </h3>
 
-                    <p>
-                        Rp {{ number_format($product->harga, 0, ',', '.') }}
+
+                    <p class="katalog-desc">
+                        {{ $product->deskripsi }}
                     </p>
 
-                    <div class="d-flex gap-1 flex-wrap">
 
-                        {{-- DETAIL --}}
-                        <a
-                            href="{{ route('products.show', $product->id) }}"
-                            class="btn btn-dark btn-sm"
-                        >
-                            Detail
-                        </a>
+                    <!-- FOOTER -->
+                    <div class="katalog-footer">
+
+                        <span class="katalog-harga">
+                            Rp {{ number_format($product->harga, 0, ',', '.') }}
+                        </span>
 
 
-                        @auth
+                        <div class="katalog-actions">
 
-                            {{-- BELI --}}
+                            <!-- DETAIL -->
+                            <a
+                                href="{{ route('products.show', $product->id) }}"
+                                class="katalog-btn-detail">
+                                Detail
+                            </a>
+
+
+                            <!-- KERANJANG -->
                             <form
                                 action="{{ route('cart.store') }}"
                                 method="POST"
-                                class="d-inline"
-                            >
+                                class="katalog-cart-form">
 
                                 @csrf
 
                                 <input
                                     type="hidden"
                                     name="product_id"
-                                    value="{{ $product->id }}"
-                                >
+                                    value="{{ $product->id }}">
 
                                 <input
                                     type="hidden"
                                     name="jumlah"
-                                    value="1"
-                                >
-
-                                <input
-                                    type="hidden"
-                                    name="redirect_to"
-                                    value="cart"
-                                >
+                                    value="1">
 
                                 <button
                                     type="submit"
-                                    class="btn btn-success btn-sm"
-                                    {{ $product->stok <= 0 ? 'disabled' : '' }}
-                                >
-                                    Beli
-                                </button>
-
-                            </form>
-
-
-                            {{-- KERANJANG --}}
-                            <form
-                                action="{{ route('cart.store') }}"
-                                method="POST"
-                                class="d-inline"
-                            >
-
-                                @csrf
-
-                                <input
-                                    type="hidden"
-                                    name="product_id"
-                                    value="{{ $product->id }}"
-                                >
-
-                                <input
-                                    type="hidden"
-                                    name="jumlah"
-                                    value="1"
-                                >
-
-                                <input
-                                    type="hidden"
-                                    name="redirect_to"
-                                    value="catalog"
-                                >
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-secondary btn-sm"
-                                    {{ $product->stok <= 0 ? 'disabled' : '' }}
-                                >
+                                    class="katalog-btn-keranjang">
                                     Keranjang
                                 </button>
 
                             </form>
 
-                        @else
-
-                            {{-- BELUM LOGIN --}}
-                            <a
-                                href="{{ route('login') }}"
-                                class="btn btn-success btn-sm"
-                            >
-                                Beli
-                            </a>
-
-                            <a
-                                href="{{ route('login') }}"
-                                class="btn btn-secondary btn-sm"
-                            >
-                                Keranjang
-                            </a>
-
-                        @endauth
+                        </div>
 
                     </div>
 
@@ -191,20 +152,18 @@
 
             </div>
 
+            @endforeach
+
         </div>
 
-    @empty
 
-        <div class="col-12 text-center">
-            Tidak ada produk
+        <!-- PAGINATION -->
+        <div class="katalog-pagination">
+            {{ $products->links('pagination::bootstrap-5') }}
         </div>
 
-    @endforelse
+    </div>
 
-</div>
-
-
-{{ $products->links() ?? '' }}
+</section>
 
 @endsection
-
