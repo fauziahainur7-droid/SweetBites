@@ -4,210 +4,291 @@
 
 @section('content')
 
-<a href="{{ route('catalog') }}"
-   class="btn btn-secondary mb-3">
-     Kembali ke Katalog
-</a>
+<div class="detail-page">
 
-<div class="card">
+    {{-- Kembali ke katalog --}}
+    <a href="{{ route('catalog') }}" class="detail-back">
+        <span>&lsaquo;</span>
+        Kembali ke Katalog
+    </a>
 
-    <div class="card-body">
+    {{-- Kartu utama detail produk --}}
+    <section class="detail-card">
 
-        <div class="row">
+        {{-- Kolom kiri: foto produk --}}
+        <div class="detail-left">
 
-            <div class="col-md-5">
-
+            <div class="detail-image">
                 @if($product->gambar)
                     <img
                         src="{{ asset('storage/products/' . $product->gambar) }}"
-                        class="img-fluid rounded"
                         alt="{{ $product->nama_kue }}"
                     >
-
                 @else
-
-                    <div class="bg-light p-5 text-center">
-                        Tidak ada gambar
+                    <div class="detail-no-image">
+                        <span>SweetBites</span>
+                        <p>Foto produk belum tersedia</p>
                     </div>
-
                 @endif
-
             </div>
 
-            <div class="col-md-7">
+            <div class="detail-fresh-note">
+                <span class="fresh-dot"></span>
+                Dipanggang Segar Hari Ini
+            </div>
 
-                <h2>{{ $product->nama_kue }}</h2>
+        </div>
 
-                <p>
-                    <strong>Kategori:</strong>
-                    {{ $product->category->nama_kategori ?? '-' }}
-                </p>
+        {{-- Kolom kanan: informasi produk --}}
+        <div class="detail-right">
 
-                <h4>
-                    Rp {{ number_format($product->harga, 0, ',', '.') }}
-                </h4>
+            <span class="detail-category">
+                {{ $product->category->nama_kategori ?? 'KUE ARTISAN' }}
+            </span>
 
-                <p>
-                    <strong>Stok:</strong>
-                    {{ $product->stok }}
-                </p>
+            <h1 class="detail-title">
+                {{ $product->nama_kue }}
+            </h1>
 
-                <p>
-                    {{ $product->deskripsi }}
-                </p>
+            <div class="detail-rating">
+                <span class="rating-stars">★★★★★</span>
+                <strong>
+                    {{ number_format($reviews->count() > 0 ? $reviews->avg('rating') : 0, 1) }}
+                </strong>
+                <span class="rating-count">
+                    ({{ $reviews->count() }} ulasan)
+                </span>
+            </div>
 
+            <div class="detail-price">
+                Rp {{ number_format($product->harga, 0, ',', '.') }}
+                <span>/ pack</span>
+            </div>
 
-                @auth
+            <p class="detail-description">
+                {{ $product->deskripsi ?: 'Dibuat segar setiap hari menggunakan bahan pilihan untuk menghadirkan rasa manis di setiap momen.' }}
+            </p>
 
-                    @php
-                        $isAdmin = \App\Models\Admin::where(
-                            'email',
-                            auth()->user()->email
-                        )->exists();
-                    @endphp
+            {{-- Stok --}}
+            <div class="detail-stock">
+               <span class="stock-dot {{ $product->stok <= 0 ? 'stock-empty' : '' }}"></span>
+                <span>
+                    @if($product->stok > 0)
+                        Stok tersedia:
+                        <strong>{{ $product->stok }}</strong> pack
+                    @else
+                        <strong>Stok habis</strong>
+                    @endif
+                </span>
+            </div>
 
-                    @if(!$isAdmin)
+            {{-- Form pembelian --}}
+            @auth
 
-                        @if($product->stok > 0)
+                @php
+                    $isAdmin = \App\Models\Admin::where(
+                        'email',
+                        auth()->user()->email
+                    )->exists();
+                @endphp
 
-                            <form
-                                action="{{ route('cart.store') }}"
-                                method="POST"
-                                class="mt-3"
+                @if(!$isAdmin)
+
+                    @if($product->stok > 0)
+
+                        <form
+                            action="{{ route('cart.store') }}"
+                            method="POST"
+                            class="detail-cart-form"
+                        >
+                            @csrf
+
+                            <input
+                                type="hidden"
+                                name="product_id"
+                                value="{{ $product->id }}"
                             >
 
-                                @csrf
-
-                                <input
-                                    type="hidden"
-                                    name="product_id"
-                                    value="{{ $product->id }}"
-                                >
-
-                                <label class="form-label">
-                                    Jumlah
-                                </label>
+                            <div class="quantity-control">
+                                <button
+                                    type="button"
+                                    class="quantity-btn"
+                                    onclick="ubahJumlah(-1)"
+                                    aria-label="Kurangi jumlah"
+                                >−</button>
 
                                 <input
                                     type="number"
+                                    id="jumlahProduk"
                                     name="jumlah"
                                     value="1"
                                     min="1"
                                     max="{{ $product->stok }}"
-                                    class="form-control mb-3"
-                                    style="max-width:150px;"
+                                    aria-label="Jumlah produk"
+                                    required
                                 >
 
                                 <button
-                                    type="submit"
-                                    class="btn btn-dark"
-                                >
-                                    Tambah ke Keranjang
-                                </button>
+                                    type="button"
+                                    class="quantity-btn"
+                                    onclick="ubahJumlah(1)"
+                                    aria-label="Tambah jumlah"
+                                >+</button>
+                            </div>
 
-                            </form>
-
-                        @else
-
-                            <button
-                                class="btn btn-secondary"
-                                disabled
-                            >
-                                Stok Habis
+                            <button type="submit" class="detail-cart-btn">
+                                <span>🛍</span>
+                                Tambah ke Keranjang
                             </button>
 
-                        @endif
+                        </form>
+
+                    @else
+
+                        <button class="detail-cart-btn" disabled>
+                            Stok Habis
+                        </button>
 
                     @endif
 
                 @else
 
-                    <a
-                        href="{{ route('login') }}"
-                        class="btn btn-dark mt-3"
-                    >
-                        Login untuk Beli
-                    </a>
-
-                @endauth
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<hr class="mt-5">
-
-<h4 class="mb-4">
-    Ulasan Pelanggan
-</h4>
-
-
-@if($reviews->count() > 0)
-
-    @foreach($reviews as $review)
-
-        <div class="card mb-3">
-
-            <div class="card-body">
-
-                <h6>
-                    {{ $review->user->name }}
-                </h6>
-
-
-                <div class="mb-2">
-
-                    @for($i = 1; $i <= 5; $i++)
-
-                        @if($i <= $review->rating)
-
-                            <span>★</span>
-
-                        @else
-
-                            <span>☆</span>
-
-                        @endif
-
-                    @endfor
-
-                </div>
-
-
-                @if($review->komentar)
-
-                    <p class="mb-2">
-                        {{ $review->komentar }}
-                    </p>
+                    <div class="detail-admin-note">
+                        Akun admin tidak dapat melakukan pembelian.
+                    </div>
 
                 @endif
 
+            @else
 
-                <small class="text-muted">
+                <a href="{{ route('login') }}" class="detail-cart-btn detail-login-btn">
+                    Login untuk Beli
+                </a>
 
-                    {{ $review->created_at->format('d/m/Y') }}
+            @endauth
 
-                </small>
+            {{-- Informasi layanan --}}
+            <div class="detail-benefits">
+
+                <div class="benefit-item">
+                    <span class="benefit-icon">◷</span>
+
+                    <div>
+                        <strong>Pengiriman Instan &amp; Sameday</strong>
+                        <p>Praktis untuk menemani momen spesialmu.</p>
+                    </div>
+                </div>
+
+                <div class="benefit-item">
+                    <span class="benefit-icon">♧</span>
+
+                    <div>
+                        <strong>Kemasan Higienis &amp; Aman</strong>
+                        <p>Dikemas rapi untuk menjaga kualitas kue.</p>
+                    </div>
+                </div>
 
             </div>
 
         </div>
 
-    @endforeach
+    </section>
 
-@else
+    {{-- Ulasan pelanggan --}}
+    <section class="customer-reviews">
 
-    <div class="alert alert-secondary">
+        <div class="reviews-heading">
+            <h2>Ulasan Pelanggan</h2>
 
-        Belum ada ulasan untuk produk ini.
+            <span>
+                {{ $reviews->count() }} ulasan terbaru
+            </span>
+        </div>
 
-    </div>
+        @if($reviews->count() > 0)
 
-@endif
+            @foreach($reviews as $review)
+
+                <article class="review-card">
+
+                    <div class="review-top">
+
+                        <div class="review-user">
+
+                            <div class="review-avatar">
+                                {{ strtoupper(substr($review->user->name ?? 'P', 0, 1)) }}
+                            </div>
+
+                            <div>
+                                <h3>
+                                    {{ $review->user->name ?? 'Pelanggan' }}
+                                </h3>
+
+                                <p>
+                                    Pembeli Terverifikasi
+                                    &bull;
+                                    {{ $review->created_at->format('d/m/Y') }}
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="review-stars">
+                            @for($i = 1; $i <= 5; $i++)
+                                @if($i <= $review->rating)
+                                    <span>★</span>
+                                @else
+                                    <span>☆</span>
+                                @endif
+                            @endfor
+                        </div>
+
+                    </div>
+
+                    @if($review->komentar)
+
+                        <p class="review-comment">
+                            “{{ $review->komentar }}”
+                        </p>
+
+                    @endif
+
+                </article>
+
+            @endforeach
+
+        @else
+
+            <div class="review-empty">
+                <span>♡</span>
+                <h3>Belum ada ulasan</h3>
+                <p>
+                    Jadilah pelanggan pertama yang memberikan ulasan
+                    untuk produk ini.
+                </p>
+            </div>
+
+        @endif
+
+    </section>
+
+</div>
+
+<script>
+    function ubahJumlah(perubahan) {
+        const input = document.getElementById('jumlahProduk');
+
+        if (!input) return;
+
+        const minimum = Number(input.min) || 1;
+        const maksimum = Number(input.max) || 1;
+        const jumlahSekarang = Number(input.value) || minimum;
+
+        input.value = Math.max(
+            minimum,
+            Math.min(maksimum, jumlahSekarang + perubahan)
+        );
+    }
+</script>
 
 @endsection

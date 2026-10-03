@@ -4,181 +4,143 @@
 
 @section('content')
 
-<div class="container mt-4 mb-5">
+<div class="checkout-page">
 
-    <h2 class="mb-4">
-        Checkout
-    </h2>
+    <h1 class="checkout-title">CHECKOUT</h1>
 
-    {{-- PESANAN --}}
-    <div class="row">
+    <form action="{{ route('orders.store') }}" method="POST">
+        @csrf
 
-        {{-- FORM CHECKOUT --}}
-        <div class="col-md-8">
+        <div class="checkout-layout">
 
-            <div class="card">
+            {{-- KIRI: Form --}}
+            <div class="checkout-left">
 
-                <div class="card-body">
+                {{-- Section: Alamat --}}
+                <div class="checkout-section">
+                    <h2 class="section-title">Alamat Pengiriman</h2>
+                    <textarea name="alamat_pengirim"
+                              rows="4"
+                              class="form-control"
+                              placeholder="Tulis alamat lengkap pengiriman..."
+                              required>{{ old('alamat_pengirim', auth()->user()->alamat ?? '') }}</textarea>
+                </div>
 
-                    <form
-                        action="{{ route('orders.store') }}"
-                        method="POST"
-                    >
+                {{-- Section: Metode Pengiriman --}}
+                <div class="checkout-section">
+                    <h2 class="section-title">Metode Pengiriman</h2>
 
-                        @csrf
+                    <label class="radio-option">
+                        <input type="radio" name="metode_pengiriman" value="Ambil Sendiri"
+                               {{ old('metode_pengiriman') == 'Ambil Sendiri' ? 'checked' : '' }} required>
+                        <span class="radio-content">
+                            <span class="radio-title">Ambil Sendiri</span>
+                            <span class="radio-desc">Ambil langsung di Purbalingga</span>
+                        </span>
+                        <span class="radio-price">Gratis</span>
+                    </label>
 
+                    <label class="radio-option">
+                        <input type="radio" name="metode_pengiriman" value="Diantar"
+                               {{ old('metode_pengiriman') == 'Diantar' ? 'checked' : '' }}>
+                        <span class="radio-content">
+                            <span class="radio-title">Diantar</span>
+                            <span class="radio-desc">Dikirim oleh kurir SweetBites</span>
+                        </span>
+                        <span class="radio-price">Gratis</span>
+                    </label>
+                </div>
 
-                        {{-- ALAMAT --}}
-                        <div class="mb-3">
+                {{-- Section: Metode Pembayaran --}}
+                <div class="checkout-section">
+                    <h2 class="section-title">Metode Pembayaran</h2>
 
-                            <label class="form-label">
-                                Alamat Pengiriman
-                            </label>
+                    <label class="radio-option">
+                        <input type="radio" name="metode_pembayaran" value="Bank Transfer"
+                               {{ old('metode_pembayaran') == 'Bank Transfer' ? 'checked' : '' }} required>
+                        <span class="radio-content">
+                            <span class="radio-title">Transfer Bank</span>
+                            <span class="radio-desc">BCA, Mandiri, atau BRI</span>
+                        </span>
+                    </label>
 
-                            <textarea
-                                name="alamat_pengirim"
-                                class="form-control"
-                                rows="3"
-                                required
-                            >{{ request('alamat') }}</textarea>
+                    <label class="radio-option">
+                        <input type="radio" name="metode_pembayaran" value="E-Wallet"
+                               {{ old('metode_pembayaran') == 'E-Wallet' ? 'checked' : '' }}>
+                        <span class="radio-content">
+                            <span class="radio-title">E-Wallet</span>
+                            <span class="radio-desc">DANA, OVO, GoPay, atau ShopeePay</span>
+                        </span>
+                    </label>
 
-                        </div>
+                    <label class="radio-option">
+                        <input type="radio" name="metode_pembayaran" value="COD"
+                               {{ old('metode_pembayaran') == 'COD' ? 'checked' : '' }}>
+                        <span class="radio-content">
+                            <span class="radio-title">COD (Bayar di Tempat)</span>
+                            <span class="radio-desc">Bayar saat pesanan tiba</span>
+                        </span>
+                    </label>
+                </div>
 
+                {{-- Section: Catatan --}}
+                <div class="checkout-section">
+                    <h2 class="section-title">Catatan (Opsional)</h2>
+                    <textarea name="catatan"
+                              rows="3"
+                              class="form-control"
+                              placeholder="Contoh: Tolong tambahkan kartu ucapan...">{{ old('catatan') }}</textarea>
+                </div>
 
-                        {{-- METODE PENGIRIMAN --}}
-                        <div class="mb-3">
+                {{-- Tombol aksi --}}
+                <div class="checkout-actions">
+                    <button type="submit" class="btn-place-order">
+                        <i class="bi bi-bag-check"></i>
+                        Buat Pesanan
+                    </button>
 
-                            <label class="form-label">
-                                Metode Pengiriman
-                            </label>
+                    <a href="{{ route('cart.index') }}" class="btn-back-cart">
+                        Kembali
+                    </a>
+                </div>
 
-                            <div class="form-control bg-light">
-                                {{ request('metode_pengiriman') }}
+            </div>
+
+            {{-- KANAN: Ringkasan --}}
+            <div class="checkout-right">
+
+                <div class="checkout-summary">
+                    <h2 class="summary-title">Shopping Bag ({{ $carts->count() }})</h2>
+
+                    <div class="summary-items">
+                        @forelse($carts as $cart)
+                            <div class="summary-item">
+                                <div class="summary-item-info">
+                                    <span class="summary-item-name">{{ $cart->product->nama_kue }}</span>
+                                    <span class="summary-item-qty">x{{ $cart->jumlah }}</span>
+                                </div>
+                                <strong class="summary-item-price">
+                                    Rp{{ number_format($cart->product->harga * $cart->jumlah, 0, ',', '.') }}
+                                </strong>
                             </div>
+                        @empty
+                            <p class="summary-empty">Keranjang kosong</p>
+                        @endforelse
+                    </div>
 
-                            <input
-                                type="hidden"
-                                name="metode_pengiriman"
-                                value="{{ request('metode_pengiriman') }}"
-                            >
+                    <hr class="checkout-divider">
 
-                        </div>
-
-
-                        {{-- METODE PEMBAYARAN --}}
-                        <div class="mb-3">
-
-                            <label class="form-label">
-                                Metode Pembayaran
-                            </label>
-
-                            <div class="form-control bg-light">
-                                {{ request('metode_pembayaran') }}
-                            </div>
-
-                            <input
-                                type="hidden"
-                                name="metode_pembayaran"
-                                value="{{ request('metode_pembayaran') }}"
-                            >
-
-                        </div>
-
-
-                        {{-- INFORMASI TAMBAHAN --}}
-                        @if(request('metode_pengiriman') === 'Diantar')
-
-                            <div class="alert alert-info">
-                                Pesanan akan diantar ke alamat yang kamu masukkan.
-                            </div>
-
-                        @elseif(request('metode_pengiriman') === 'Ambil Sendiri')
-
-                            <div class="alert alert-info">
-                                Pesanan akan diambil sendiri di toko SweetBites.
-                            </div>
-
-                        @endif
-
-
-                        {{-- TOMBOL --}}
-                        <div class="mt-4">
-
-                            <button
-                                type="submit"
-                                class="btn btn-dark"
-                            >
-                                Buat Pesanan
-                            </button>
-
-                            <a
-                                href="{{ route('cart.index') }}"
-                                class="btn btn-secondary"
-                            >
-                                Kembali
-                            </a>
-
-                        </div>
-
-                    </form>
+                    <div class="summary-total">
+                        <span>Total</span>
+                        <strong>Rp{{ number_format($subtotal, 0, ',', '.') }}</strong>
+                    </div>
 
                 </div>
 
             </div>
 
         </div>
-
-
-        {{-- RINGKASAN --}}
-        <div class="col-md-4">
-
-            <div class="card">
-
-                <div class="card-header">
-                    Ringkasan
-                </div>
-
-                <div class="card-body">
-
-                    @php
-                        $total = 0;
-                    @endphp
-
-                    @foreach($carts as $cart)
-
-                        @php
-                            $subtotal =
-                                $cart->product->harga *
-                                $cart->jumlah;
-
-                            $total += $subtotal;
-                        @endphp
-
-                        <p>
-                            {{ $cart->product->nama_kue }}
-                            x{{ $cart->jumlah }}
-
-                            =
-                            Rp {{ number_format($subtotal, 0, ',', '.') }}
-                        </p>
-
-                    @endforeach
-
-                    <hr>
-
-                    <h5>
-                        Total:
-                        Rp {{ number_format($total, 0, ',', '.') }}
-                    </h5>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
+    </form>
 
 </div>
-
 @endsection
