@@ -178,6 +178,16 @@ Route::middleware(['auth'])->group(function () {
         'store'
     ])->name('payments.store');
 
+    Route::put('/payments/{id}/status', [
+        App\Http\Controllers\PaymentController::class,
+        'updateStatus'
+    ])->name('payments.update');
+
+    Route::delete('/payments/{id}', [
+        App\Http\Controllers\PaymentController::class,
+        'destroy'
+    ])->name('payments.destroy');
+
 
     // REVIEW / ULASAN CUSTOMER
 
@@ -207,6 +217,12 @@ Route::middleware(['auth'])->group(function () {
         App\Http\Controllers\ProfileController::class,
         'update'
     ])->name('profile.update');
+
+    // Mengubah password
+    Route::put('/profile/password', [
+        App\Http\Controllers\ProfileController::class,
+        'updatePassword'
+    ])->name('profile.password.update');
 });
 
 
