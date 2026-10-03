@@ -16,6 +16,8 @@
 
     <!-- CSS SweetBites -->
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
 <body>
@@ -75,6 +77,12 @@
                 <i class="bi bi-bar-chart-fill"></i>
                 <span>Laporan</span>
             </a>
+
+            <a href="{{ url('/admin/users') }}"
+                    class="{{ request()->is('admin/users*') ? 'active' : '' }}">
+                    <i class="bi bi-people"></i>
+                    <span>Users</span>
+                </a>
         </nav>
 
         <div class="sidebar-footer">
