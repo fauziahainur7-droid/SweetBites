@@ -4,287 +4,323 @@
 
 @section('content')
 
-<div class="container mt-4 mb-5">
+<div class="payment-page">
 
-    <div class="card">
-        <div class="card-body p-4">
 
-            <h2 class="text-center mb-4">
-                Terima kasih telah berbelanja!
-            </h2>
-
-            <p>
-                <strong>No. Pesanan:</strong>
-                {{ $order->kode_pesanan }}
+    {{-- Alert sesuai status pembayaran --}}
+    @if (session('success'))
+    <div class="payment-alert payment-alert-success">
+        <div class="payment-alert-icon">
+            <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div class="payment-alert-content">
+            <div class="payment-alert-title">
+                {{ session('success') }}
+            </div>
+        </div>
+    </div>
+    @elseif (session('error'))
+    <div class="payment-alert payment-alert-error">
+        <div class="payment-alert-icon">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <div class="payment-alert-content">
+            <div class="payment-alert-title">
+                {{ session('error') }}
+            </div>
+        </div>
+    </div>
+    @elseif ($order->payment && $order->payment->status === 'buram')
+    <div class="payment-alert payment-alert-error">
+        <div class="payment-alert-icon">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <div class="payment-alert-content">
+            <div class="payment-alert-title">
+                Bukti Pembayaran Kurang Jelas
+            </div>
+            <p class="payment-alert-desc">
+                Bukti transfer kamu kurang jelas. Silakan unggah ulang
+                foto bukti pembayaran yang lebih jelas.
             </p>
-
-            <p>
-                <strong>Total:</strong>
-                Rp {{ number_format($order->total_harga, 0, ',', '.') }}
+        </div>
+    </div>
+    @elseif ($order->payment && $order->payment->status === 'gagal')
+    <div class="payment-alert payment-alert-error">
+        <div class="payment-alert-icon">
+            <i class="bi bi-x-circle-fill"></i>
+        </div>
+        <div class="payment-alert-content">
+            <div class="payment-alert-title">
+                Pembayaran Ditolak
+            </div>
+            <p class="payment-alert-desc">
+                Pembayaran kamu ditolak oleh admin. Silakan periksa
+                kembali bukti pembayaran dan unggah ulang.
             </p>
-
-            <p>
-                <strong>Pengiriman:</strong>
-                {{ $order->metode_pengiriman }}
+        </div>
+    </div>
+    @elseif ($order->payment && $order->payment->status === 'lunas')
+    <div class="payment-alert payment-alert-success">
+        <div class="payment-alert-icon">
+            <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div class="payment-alert-content">
+            <div class="payment-alert-title">
+                Pembayaran Berhasil Diverifikasi
+            </div>
+            <p class="payment-alert-desc">
+                Pembayaran kamu sudah dikonfirmasi. Pesanan sedang diproses.
             </p>
-
-            <p>
-                <strong>Pembayaran:</strong>
-                {{ $order->metode_pembayaran }}
+        </div>
+    </div>
+    @else
+    <div class="payment-alert">
+        <div class="payment-alert-icon">
+            <i class="bi bi-bell-fill"></i>
+        </div>
+        <div class="payment-alert-content">
+            <div class="payment-alert-title">
+                Pesanan Berhasil Dicatat!
+                <span class="payment-alert-badge">
+                    <i class="bi bi-clock"></i> Menunggu Pembayaran
+                </span>
+            </div>
+            <p class="payment-alert-desc">
+                Silakan selesaikan pembayaran dan unggah bukti transfer
+                agar pesanan kamu dapat diverifikasi.
             </p>
+        </div>
+    </div>
+    @endif
 
-            <p>
-                <strong>Status:</strong>
+    {{-- Layout 2 kolom --}}
+    <div class="payment-layout">
 
-                @if($order->metode_pembayaran === 'COD')
+        {{-- KIRI --}}
+        <div class="payment-left">
 
-                    <span class="badge bg-success">
-                        Pesanan Diproses
-                    </span>
+            <div class="payment-card">
+                {{-- Strip atas --}}
+                <div class="payment-card-strip"></div>
 
-                @else
 
-                    <span class="badge bg-warning text-dark">
-                        Menunggu Pembayaran
-                    </span>
-
-                @endif
-            </p>
-
-            <hr>
-
-            {{-- COD --}}
-
-            @if($order->metode_pembayaran === 'COD')
-
-                <div class="alert alert-success">
-
-                    <h5>
-                        Pesanan COD Berhasil!
-                    </h5>
-
-                    <p class="mb-0">
-                        Pembayaran dilakukan saat pesanan
-                        diterima. Tidak perlu melakukan transfer
-                        atau mengunggah bukti pembayaran.
-                    </p>
-
+                {{-- Icon centang --}}
+                <div class="payment-check">
+                    <i class="bi bi-check-lg"></i>
                 </div>
 
+                {{-- Judul --}}
+                <h1 class="payment-title">Terima kasih telah berbelanja!</h1>
+                <p class="payment-subtitle">
+                    Pesanan Anda telah tercatat di dapur kami dan sedang menunggu konfirmasi pembayaran.
+                </p>
 
-            {{-- BANK TRANSFER --}}
+                {{-- Detail pesanan --}}
+                <div class="payment-details">
 
-            @elseif($order->metode_pembayaran === 'Bank Transfer')
-
-                <div class="border p-3 mb-3">
-
-                    <h4>
-                        INSTRUKSI PEMBAYARAN
-                    </h4>
-
-                    <p>
-                        Silakan lakukan transfer ke rekening berikut:
-                    </p>
-
-                    <p>
-                        <strong>Bank BCA</strong><br>
-                        1234567890<br>
-                        a/n SweetBites
-                    </p>
-
-                    <p>
-                        <strong>Total Transfer:</strong><br>
-
-                        Rp {{ number_format(
-                            $order->total_harga,
-                            0,
-                            ',',
-                            '.'
-                        ) }}
-                    </p>
-
-                    <p class="text-danger">
-                        <strong>Batas Pembayaran:</strong>
-                        24 Jam
-                    </p>
-
-                </div>
-
-                <form
-                    action="{{ route('payments.store') }}"
-                    method="POST"
-                    enctype="multipart/form-data"
-                >
-
-                    @csrf
-
-                    <input
-                        type="hidden"
-                        name="order_id"
-                        value="{{ $order->id }}"
-                    >
-
-                    <input
-                        type="hidden"
-                        name="metode_pembayaran"
-                        value="{{ $order->metode_pembayaran }}"
-                    >
-
-                    <input
-                        type="hidden"
-                        name="total_bayar"
-                        value="{{ $order->total_harga }}"
-                    >
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            Upload Bukti Pembayaran
-                        </label>
-
-                        <input
-                            type="file"
-                            name="bukti_pembayaran"
-                            class="form-control"
-                            accept="image/jpeg,image/png,image/jpg"
-                            required
-                        >
-
+                    <div class="payment-row">
+                        <span>Nomor Pesanan</span>
+                        <div class="payment-order-wrapper">
+                            <strong class="payment-order-code">{{ $order->kode_pesanan }}</strong>
+                            <button type="button" class="payment-copy-mini" title="Salin">
+                                <i class="bi bi-copy"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <button
-                        type="submit"
-                        class="btn btn-dark"
-                    >
-                        Kirim Bukti Pembayaran
-                    </button>
-
-                </form>
-
-            {{-- E-WALLET --}}
-
-            @elseif($order->metode_pembayaran === 'E-Wallet')
-
-                <div class="border p-3 mb-3">
-
-                    <h4>
-                        INSTRUKSI PEMBAYARAN E-WALLET
-                    </h4>
-
-                    <p>
-                        Silakan lakukan pembayaran menggunakan
-                        salah satu E-Wallet berikut:
-                    </p>
-
-                    <p>
-                        <strong>DANA</strong><br>
-                        081234567890
-                    </p>
-
-                    <p>
-                        <strong>OVO</strong><br>
-                        081234567890
-                    </p>
-
-                    <p>
-                        <strong>GoPay</strong><br>
-                        081234567890
-                    </p>
-
-                    <p>
-                        <strong>Total Pembayaran:</strong><br>
-
-                        Rp {{ number_format(
-                            $order->total_harga,
-                            0,
-                            ',',
-                            '.'
-                        ) }}
-                    </p>
-
-                    <p class="text-danger">
-                        <strong>Batas Pembayaran:</strong>
-                        24 Jam
-                    </p>
-
-                </div>
-
-                <form
-                    action="{{ route('payments.store') }}"
-                    method="POST"
-                    enctype="multipart/form-data"
-                >
-
-                    @csrf
-
-                    <input
-                        type="hidden"
-                        name="order_id"
-                        value="{{ $order->id }}"
-                    >
-
-                    <input
-                        type="hidden"
-                        name="metode_pembayaran"
-                        value="{{ $order->metode_pembayaran }}"
-                    >
-
-                    <input
-                        type="hidden"
-                        name="total_bayar"
-                        value="{{ $order->total_harga }}"
-                    >
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            Upload Bukti Pembayaran
-                        </label>
-
-                        <input
-                            type="file"
-                            name="bukti_pembayaran"
-                            class="form-control"
-                            accept="image/jpeg,image/png,image/jpg"
-                            required
-                        >
-
+                    <div class="payment-row">
+                        <span>Metode Pengambilan</span>
+                        <span class="payment-method">
+                            <i class="bi bi-bag"></i>
+                            {{ $order->metode_pengiriman }} (Pick-up Counter)
+                        </span>
                     </div>
 
-                    <button
-                        type="submit"
-                        class="btn btn-dark"
-                    >
-                        Kirim Bukti Pembayaran
-                    </button>
+                    <div class="payment-row">
+                        <span>Status Pesanan</span>
+                        <span class="payment-status-badge">
+                            <i class="bi bi-clock-fill"></i>
+                            Menunggu Pembayaran
+                        </span>
+                    </div>
 
-                </form>
+                    <div class="payment-divider"></div>
 
-            @endif
+                    {{-- Total Tagihan --}}
+                    <div class="payment-total-row">
+                        <div>
+                            <span class="payment-total-label">Total Tagihan</span>
+                            <p class="payment-total-note">Termasuk pajak & pengemasan eco-box</p>
+                        </div>
+                        <strong class="payment-total-amount">
+                            Rp {{ number_format($order->total_harga, 0, ',', '.') }}
+                        </strong>
+                    </div>
 
-            {{-- TOMBOL BAWAH --}}
+                    <div class="payment-divider"></div>
 
-            <div class="text-center mt-4">
+                    {{-- Rincian Item --}}
+                    <div class="payment-items">
+                        <div class="payment-items-header">
+                            <span>Rincian Item Kue ({{ $order->orderDetails->count() ?? 3 }} item)</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+                    </div>
 
-                <a
-                    href="{{ route('orders.show', $order->id) }}"
-                    class="btn btn-secondary"
-                >
+                </div>
+            </div>
+
+            {{-- Tombol bawah --}}
+            <div class="payment-bottom">
+                <a href="{{ route('orders.index') }}" class="btn-payment-riwayat">
                     Lihat Riwayat Pesanan
                 </a>
-
-                <a
-                    href="{{ route('home') }}"
-                    class="btn btn-outline-dark"
-                >
+                <a href="{{ route('home') }}" class="btn-payment-beranda">
                     Kembali ke Beranda
                 </a>
+            </div>
+
+        </div>
+
+        {{-- KANAN --}}
+        <div class="payment-right">
+
+            <div class="payment-card">
+
+                {{-- Header --}}
+                <div class="payment-instruction-header">
+                    <div class="payment-instruction-title">
+                        <i class="bi bi-bank2"></i>
+                        Instruksi Transfer Bank
+                    </div>
+                    <div class="payment-deadline-badge">
+                        <i class="bi bi-clock"></i>
+                        24 Jam dari pemesanan
+                    </div>
+                </div>
+
+                {{-- Bank card --}}
+                <div class="payment-bank-card">
+                    <div class="payment-bank-header">
+                        <div class="payment-bank-logo">BCA</div>
+                        <div class="payment-bank-info">
+                            <strong>Bank Central Asia</strong>
+                            <small>Transfer Antar Bank / Manual</small>
+                        </div>
+                    </div>
+
+                    <div class="payment-account-section">
+                        <span class="payment-account-label">NOMOR REKENING</span>
+                        <div class="payment-account-row">
+                            <strong class="payment-account-number">1234567890</strong>
+                            <button type="button" class="payment-copy-btn">
+                                <i class="bi bi-copy"></i>
+                                Salin
+                            </button>
+                        </div>
+                        <small class="payment-account-name">a/n SweetBites </small>
+                    </div>
+
+                    <div class="payment-transfer-total">
+                        <span>Total Transfer Semua:</span>
+                        <strong>Rp {{ number_format($order->total_harga, 0, ',', '.') }}</strong>
+                    </div>
+                </div>
+
+                {{-- Upload bukti --}}
+                <h3 class="payment-upload-title">Unggah Bukti Transfer</h3>
+
+                <form action="{{ route('payments.store') }}"
+                    method="POST"
+                    enctype="multipart/form-data">
+                    @csrf
+
+                    <input type="hidden" name="order_id" value="{{ $order->id }}">
+                    <input type="hidden" name="metode_pembayaran"
+                        value="{{ $order->metode_pembayaran }}">
+                    <input type="hidden" name="total_bayar"
+                        value="{{ $order->total_harga }}">
+
+                    <label class="payment-upload-box" for="bukti_pembayaran">
+                        <div class="payment-upload-icon">
+                            <i class="bi bi-cloud-arrow-up-fill"></i>
+                        </div>
+
+                        <strong>
+                            @if ($order->payment &&
+                            in_array($order->payment->status, ['buram', 'gagal']))
+                            Pilih Bukti Pembayaran Baru
+                            @else
+                            Klik untuk pilih file bukti transfer
+                            @endif
+                        </strong>
+
+                        <small>Format: JPG atau PNG, maksimal 2 MB</small>
+
+                        <input type="file"
+                            id="bukti_pembayaran"
+                            name="bukti_pembayaran"
+                            accept=".jpg,.jpeg,.png"
+                            required
+                            hidden>
+                    </label>
+
+                    <button type="submit" class="btn-submit-payment">
+                        <i class="bi bi-send-fill"></i>
+                        Kirim Bukti Pembayaran
+                    </button>
+                </form>
+
+                {{-- Footer trust --}}
+                <div class="payment-trust-footer">
+                    <span>
+                        <i class="bi bi-shield-check"></i>
+                        Transaksi Aman
+                    </span>
+                    <span class="payment-dot">•</span>
+                    <span>
+                        Dijamin Fresh Bake
+                    </span>
+                </div>
 
             </div>
 
         </div>
+
     </div>
 
 </div>
+
+{{-- Script copy nomor rekening --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const copyBtn = document.querySelector('.payment-copy-btn');
+        if (copyBtn) {
+            copyBtn.addEventListener('click', function() {
+                const num = document.querySelector('.payment-account-number').textContent.trim();
+                navigator.clipboard.writeText(num).then(function() {
+                    const originalHTML = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="bi bi-check-lg"></i> Tersalin!';
+                    setTimeout(function() {
+                        copyBtn.innerHTML = originalHTML;
+                    }, 2000);
+                });
+            });
+        }
+
+        // Preview nama file
+        const fileInput = document.getElementById('bukti_pembayaran');
+        if (fileInput) {
+            fileInput.addEventListener('change', function(e) {
+                const fileName = e.target.files[0]?.name || '';
+                const label = document.querySelector('.payment-upload-box strong');
+                if (fileName) {
+                    label.textContent = '📎 ' + fileName;
+                }
+            });
+        }
+    });
+</script>
 
 @endsection

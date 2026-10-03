@@ -36,67 +36,97 @@ class PaymentController extends Controller
         );
     }
 
-    // CUSTOMER: menyimpan bukti pembayaran
+
+    // CUSTOMER: menyimpan atau memperbarui bukti pembayaran
     public function store(Request $request)
     {
         $data = $request->validate([
             'order_id' => 'required|exists:orders,id',
             'metode_pembayaran' => 'required|string',
             'total_bayar' => 'required|numeric|min:0',
-            'bukti_pembayaran' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'bukti_pembayaran' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
 
         $order = Order::where('user_id', Auth::id())
-            ->where('id', $data['order_id'])
             ->with('payment')
-            ->firstOrFail();
+            ->findOrFail($data['order_id']);
 
-        // COD tidak membutuhkan bukti pembayaran
-        if ($order->metode_pembayaran === 'COD') {
+        // COD tidak membutuhkan bukti transfer
+        if (strtoupper($order->metode_pembayaran) === 'COD') {
+            if (!$order->payment) {
+                Payment::create([
+                    'order_id' => $order->id,
+                    'metode_pembayaran' => 'COD',
+                    'total_bayar' => $order->total_harga,
+                    'bukti_pembayaran' => null,
+                    'status' => 'menunggu',
+                ]);
+            }
+
+            return redirect()
+                ->route('orders.index')
+                ->with('success', 'Pesanan COD berhasil dicatat.');
+        }
+
+        $payment = $order->payment;
+
+        // Jika pembayaran sudah ada, hanya status buram atau gagal
+        // yang boleh mengunggah bukti pengganti.
+        if ($payment && !in_array($payment->status, ['buram', 'gagal'])) {
             return back()->with(
                 'error',
-                'Pesanan COD tidak perlu upload bukti pembayaran.'
+                'Pembayaran ini sedang diproses atau sudah terverifikasi.'
             );
         }
 
-        // Cek apakah pembayaran sudah pernah dibuat
-        if ($order->payment) {
-            return back()->with(
-                'error',
-                'Pembayaran untuk pesanan ini sudah pernah dibuat.'
-            );
+        // Bukti wajib disertakan untuk pembayaran baru atau penggantian bukti
+        if (!$request->hasFile('bukti_pembayaran')) {
+            return back()
+                ->withErrors([
+                    'bukti_pembayaran' => 'Silakan pilih bukti pembayaran yang baru.',
+                ])
+                ->withInput();
         }
 
-        // Upload bukti pembayaran
+        // Simpan file bukti yang baru
         $file = $request->file('bukti_pembayaran');
+        $filename = 'payment-' . uniqid() . '.' . $file->extension();
 
-        $filename = 'payment-' .
-            time() .
-            '.' .
-            $file->getClientOriginalExtension();
+        $file->storeAs('payments', $filename, 'public');
 
-        $file->storeAs(
-            'payments',
-            $filename,
-            'public'
-        );
+        if ($payment) {
+            // Hapus file lama setelah file baru berhasil disimpan
+            if ($payment->bukti_pembayaran) {
+                Storage::disk('public')->delete(
+                    'payments/' . $payment->bukti_pembayaran
+                );
+            }
 
-        $data['bukti_pembayaran'] = $filename;
-
-        // Status awal pembayaran
-        $data['status'] = 'menunggu';
-
-        // Simpan pembayaran
-        Payment::create($data);
+            // Perbarui pembayaran yang sama, bukan membuat data baru
+            $payment->update([
+                'metode_pembayaran' => $data['metode_pembayaran'],
+                'total_bayar' => $data['total_bayar'],
+                'bukti_pembayaran' => $filename,
+                'status' => 'menunggu',
+            ]);
+        } else {
+            // Buat data pembayaran jika memang belum pernah ada
+            Payment::create([
+                'order_id' => $order->id,
+                'metode_pembayaran' => $data['metode_pembayaran'],
+                'total_bayar' => $data['total_bayar'],
+                'bukti_pembayaran' => $filename,
+                'status' => 'menunggu',
+            ]);
+        }
 
         return redirect()
             ->route('orders.index')
             ->with(
                 'success',
-                'Bukti pembayaran berhasil dikirim. Menunggu verifikasi admin.'
+                'Bukti pembayaran berhasil diperbarui dan menunggu verifikasi admin.'
             );
     }
-
     // ADMIN: menampilkan file bukti pembayaran
     public function proof(string $id)
     {
@@ -132,22 +162,21 @@ class PaymentController extends Controller
         );
     }
 
+
     // ADMIN: update status pembayaran
-    public function updateStatus(
-        Request $request,
-        string $id
-    ) {
+    public function updateStatus(Request $request, string $id)
+    {
         $request->validate([
-            'status' => 'required|in:menunggu,verifikasi,lunas,gagal',
+            'status' => 'required|in:menunggu,verifikasi,lunas,buram,gagal',
         ]);
 
-        $payment = Payment::findOrFail($id);
+        $payment = Payment::with('order')->findOrFail($id);
 
         $payment->update([
             'status' => $request->status,
         ]);
 
-        // Jika pembayaran lunas, pesanan menjadi diproses
+        // Jika pembayaran diterima, pesanan dilanjutkan ke dapur
         if ($request->status === 'lunas') {
             $payment->order->update([
                 'status' => 'diproses',
@@ -155,11 +184,8 @@ class PaymentController extends Controller
         }
 
         return redirect()
-            ->route('admin.payments.index')
-            ->with(
-                'success',
-                'Status pembayaran berhasil diperbarui!'
-            );
+            ->route('admin.payments.show', $payment->id)
+            ->with('success', 'Status pembayaran berhasil diperbarui.');
     }
 
     // ADMIN: menghapus pembayaran
