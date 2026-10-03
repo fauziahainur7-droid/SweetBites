@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Report;
+use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
@@ -69,6 +70,9 @@ class ReportController extends Controller
             ->orderByDesc('total_terjual')
             ->first();
 
+        // Ambil semua produk beserta kategorinya
+        $products = Product::with('category')->get();
+
         // Data report yang sudah digenerate
         $reports = Report::orderBy(
             'created_at',
@@ -80,6 +84,7 @@ class ReportController extends Controller
             compact(
                 'reports',
                 'orders',
+                'products',
                 'totalOrders',
                 'totalRevenue',
                 'totalCustomers',
@@ -105,8 +110,8 @@ class ReportController extends Controller
             $data['periode_mulai'],
             Carbon::parse($data['periode_selesai'])->endOfDay()
         ])
-        ->where('status', 'selesai')
-        ->sum('total_harga');
+            ->where('status', 'selesai')
+            ->sum('total_harga');
 
         $data['total_penjualan'] = $totalPenjualan;
 
