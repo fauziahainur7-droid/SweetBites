@@ -3,7 +3,7 @@
 @section('title', 'Detail Produk (Admin)')
 
 @section('content')
-<a href="{{ route('admin.products.index') }}" class="btn btn-secondary mb-3">← Kembali</a>
+<a href="{{ route('products.index') }}" class="btn btn-secondary mb-3">← Kembali</a>
 
 <div class="card">
     <div class="card-body">

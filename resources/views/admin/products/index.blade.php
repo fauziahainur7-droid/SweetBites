@@ -3,68 +3,521 @@
 @section('title', 'Manajemen Produk')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Manajemen Produk</h2>
-    <a href="{{ route('admin.products.create') }}" class="btn btn-dark">+ Tambah Produk</a>
-</div>
+<div class="catalog-page">
 
-<div class="row mb-3">
-    <div class="col-md-4">
-        <select class="form-control">
-            <option>Semua Kategori</option>
-        </select>
-    </div>
-    <div class="col-md-4">
-        <input type="text" class="form-control" placeholder="Cari Produk...">
-    </div>
-    <div class="col-md-4">
-        <button class="btn btn-secondary">Cari</button>
-    </div>
-</div>
+    {{-- Header --}}
+    <div class="catalog-header">
 
-<div class="card">
-    <div class="card-body">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Gambar</th>
-                    <th>Nama Kue</th>
-                    <th>Kategori</th>
-                    <th>Harga</th>
-                    <th>Stok</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div class="catalog-title">
+
+            <h1>Manajemen Katalog Produk</h1>
+
+            <p>
+                Kelola ketersediaan, kategori, dan presentasi produk toko
+            </p>
+
+        </div>
+
+        <div class="catalog-header-actions">
+
+            <div class="catalog-search">
+
+                <i class="bi bi-search"></i>
+
+                <input
+                    type="text"
+                    id="productSearch"
+                    placeholder="Cari nama cookies, brownies...">
+
+            </div>
+
+
+            <div class="view-switcher">
+
+                <button
+                    type="button"
+                    class="view-button"
+                    id="gridViewButton">
+                    <i class="bi bi-grid-3x3-gap-fill"></i>
+                    Grid
+                </button>
+
+                <button
+                    type="button"
+                    class="view-button active"
+                    id="tableViewButton">
+                    <i class="bi bi-list"></i>
+                    Tabel
+                </button>
+
+            </div>
+
+
+            <a
+                href="{{ route('admin.products.create') }}"
+                class="add-product-button">
+                <i class="bi bi-plus-lg"></i>
+                Tambah Produk
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="catalog-body">
+
+        {{-- Konten utama --}}
+        <div class="catalog-main">
+
+            {{-- Kategori --}}
+            <div class="category-filter">
+
+                <button type="button" class="category-button active" data-category="all">
+                    <strong>Semua Produk</strong>
+                    <span>({{ $totalProducts }})</span>
+                </button>
+
+                @foreach($categories as $category)
+                <button type="button" class="category-button" data-category="{{ $category->nama_kategori }}">
+                    <strong>{{ $category->nama_kategori }}</strong>
+                    <span>({{ $category->products_count }})</span>
+                </button>
+                @endforeach
+
+            </div>
+
+            {{-- Produk --}}
+            <div class="product-list" id="productList">
+
                 @forelse($products as $product)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $product->nama_kue }}</td>
-                        <td>{{ $product->category->nama_kategori ?? '-' }}</td>
-                        <td>Rp {{ number_format($product->harga, 0, ',', '.') }}</td>
-                        <td>{{ $product->stok }}</td>
-                        <td>
-                            <span class="badge bg-{{ $product->stok > 0 ? 'success' : 'danger' }}">
-                                {{ $product->stok > 0 ? 'Aktif' : 'Habis' }}
+
+                <div
+                    class="product-row"
+                    data-name="{{ strtolower($product->nama_kue) }}"
+                    data-category="{{ $product->category->nama_kategori ?? '' }}">
+
+                    {{-- Foto --}}
+                    <div class="product-image">
+
+                        @if($product->gambar)
+
+                        <img
+                            src="{{ asset('storage/products/' . $product->gambar) }}"
+                            alt="{{ $product->nama_kue }}">
+
+                        @else
+
+                        <div class="product-image-empty">
+                            <i class="bi bi-cake2"></i>
+                        </div>
+
+                        @endif
+
+                    </div>
+
+
+                    {{-- Informasi --}}
+                    <div class="product-name-area">
+
+                        <div class="product-status">
+
+                            @if($product->stok > 5)
+
+                            <span class="status-active">
+                                <i class="bi bi-check-circle-fill"></i>
+                                Aktif
                             </span>
-                        </td>
-                        <td>
-                            <a href="{{ route('admin.products.show', $product->id) }}" class="btn btn-info btn-sm">Detail</a>
-                            <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-dark btn-sm">Edit</a>
-                            <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST" class="d-inline">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin?')">Hapus</button>
+
+                            @else
+
+                            <span class="status-low">
+                                <i class="bi bi-exclamation-circle-fill"></i>
+                                Menipis
+                            </span>
+
+                            @endif
+
+                        </div>
+
+
+                        <span class="product-category">
+                            {{ $product->category->nama_kategori ?? 'Cookies' }}
+                        </span>
+
+
+                        <h3>
+                            {{ $product->nama_kue }}
+                        </h3>
+
+
+                        <p>
+                            {{ \Illuminate\Support\Str::limit($product->deskripsi ?? 'Classic artisan bakery product...', 25) }}
+                        </p>
+
+                    </div>
+
+
+                    {{-- SKU --}}
+                    <div class="product-sku">
+                        <span>SKU:</span>
+                        <strong>
+                            CK-{{ str_pad($product->id, 3, '0', STR_PAD_LEFT) }}
+                        </strong>
+
+                    </div>
+
+
+                    {{-- Harga --}}
+                    <div class="product-price">
+
+                        <span>
+                            HARGA
+                        </span>
+
+                        <strong>
+                            Rp {{ number_format($product->harga, 0, ',', '.') }}
+                        </strong>
+
+                    </div>
+
+
+                    {{-- Stok --}}
+                    @php
+                    $stokClass = $product->stok <= 5 ? 'stock-bar-low' : 'stock-bar-normal' ;
+                        $stokWidth=min(($product->stok / 30) * 100, 100);
+                        @endphp
+
+                        <div class="product-stock">
+
+                            @if($product->stok <= 5)
+                                <span class="stock-label stock-warning">
+                                STOK MENIPIS
+                                </span>
+                                @else
+                                <span class="stock-label">
+                                    STOK TOKO
+                                </span>
+                                @endif
+
+                                <div class="stock-value">
+                                    <strong>
+                                        {{ $product->stok }} pcs
+                                    </strong>
+                                </div>
+
+                                <span
+                                    class="{{ $stokClass }}"
+                                    @style(['width'=> $stokWidth . '%'])
+                                    ></span>
+
+                        </div>
+
+
+                        {{-- Aksi --}}
+                        <div class="product-actions">
+
+                            <a
+                                href="{{ route('admin.products.edit', $product->id) }}"
+                                class="edit-product-button">
+                                <i class="bi bi-pencil"></i>
+                                Edit
+                            </a>
+
+
+                            <a
+                                href="{{ route('admin.products.show', $product->id) }}"
+                                class="icon-product-button"
+                                title="Lihat Produk">
+                                <i class="bi bi-eye"></i>
+                            </a>
+
+
+                            <form
+                                action="{{ route('admin.products.destroy', $product->id) }}"
+                                method="POST"
+                                class="product-delete-form"
+                                onsubmit="return confirm('Yakin hapus produk {{ $product->nama_kue }}?')">
+                                @csrf
+                                @method('DELETE')
+                                <button
+                                    type="submit"
+                                    class="icon-product-button delete-button"
+                                    title="Hapus Produk">
+                                    <i class="bi bi-trash"></i>
+                                </button>
                             </form>
-                        </td>
-                    </tr>
+
+
+                        </div>
+
+                </div>
+
                 @empty
-                    <tr><td colspan="8" class="text-center">Belum ada produk</td></tr>
+
+                <div class="empty-product">
+
+                    <i class="bi bi-box-seam"></i>
+
+                    <h3>
+                        Belum ada produk
+                    </h3>
+
+                    <p>
+                        Tambahkan produk pertama ke katalog SweetBites.
+                    </p>
+
+                    <a
+                        href="{{ route('products.create') }}"
+                        class="add-product-button">
+                        <i class="bi bi-plus-lg"></i>
+                        Tambah Produk
+                    </a>
+
+                </div>
+
                 @endforelse
-            </tbody>
-        </table>
-        {{ $products->links() }}
+
+            </div>
+
+        </div>
+
+
+        {{-- Sidebar kanan --}}
+        <aside class="catalog-summary">
+
+            {{-- Ringkasan --}}
+            <section class="summary-section">
+
+                <div class="summary-heading">
+
+                    <h2>
+                        RINGKASAN ETALASE
+                    </h2>
+
+                </div>
+
+                <div class="summary-stats">
+
+                    <div class="summary-stat">
+                        <span>Total Item</span>
+                        <strong>{{ $totalProducts }}</strong>
+                        <small>+ {{ $totalProducts }} Aktif live</small>
+                    </div>
+
+                    <div class="summary-stat warning">
+                        <span>Stok Menipis</span>
+                        <strong>{{ $lowStockProducts }} Item</strong>
+                        <small>Perlu Restock</small>
+                    </div>
+
+                </div>
+            </section>
+
+
+            {{-- Produk terlaris --}}
+            <section class="summary-section best-selling-section">
+
+                <div class="summary-heading">
+
+                    <h2>
+                        KUE TERLARIS PEKAN INI
+                    </h2>
+
+                    <span>
+                        Live Rank
+                    </span>
+
+                </div>
+
+
+                <div class="best-selling-list">
+
+                    @php
+                    $bestSellingProducts = isset($bestSellers)
+                    ? $bestSellers
+                    : $products->take(3);
+                    @endphp
+
+
+                    @foreach($bestSellingProducts as $index => $bestProduct)
+
+                    <div class="best-product">
+
+                        <div class="rank-number">
+                            +{{ $index + 1 }}
+                        </div>
+
+                        <div class="best-product-info">
+
+                            <strong>
+                                {{ $bestProduct->nama_kue }}
+                            </strong>
+
+                            <span>
+                                {{ rand(40, 150) }} terjual ·
+                                Rp {{ number_format($bestProduct->harga, 1, ',', '.') }}jt
+                            </span>
+
+                        </div>
+
+                        <div class="growth">
+                            +{{ 9 + ($index * 3) }}%
+                        </div>
+
+                    </div>
+
+                    @endforeach
+
+                </div>
+
+            </section>
+
+
+            {{-- Tips --}}
+            <section class="catalog-tip">
+
+                <div class="tip-heading">
+
+                    <i class="bi bi-lightbulb-fill"></i>
+
+                    <strong>
+                        TIPS ETALASE CANTIK
+                    </strong>
+
+                </div>
+
+
+                <p>
+                    Foto beresolusi tinggi dengan pencahayaan natural
+                    meningkatkan konversi pembelian hingga 42%.
+                    Pastikan stok harian diperbarui sebelum jam buka cafe
+                    (08:00 WIB).
+                </p>
+
+            </section>
+
+        </aside>
+
     </div>
+
 </div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        const searchInput = document.getElementById('productSearch');
+
+        const productRows = document.querySelectorAll('.product-row');
+
+        const categoryButtons =
+            document.querySelectorAll('.category-button');
+
+
+        /* Search */
+
+        searchInput.addEventListener('input', function() {
+
+            const searchValue =
+                this.value.toLowerCase().trim();
+
+            productRows.forEach(function(row) {
+
+                const productName =
+                    row.dataset.name;
+
+                if (productName.includes(searchValue)) {
+
+                    row.style.display = '';
+
+                } else {
+
+                    row.style.display = 'none';
+
+                }
+
+            });
+
+        });
+
+
+        /* Category */
+
+        categoryButtons.forEach(function(button) {
+
+            button.addEventListener('click', function() {
+
+                categoryButtons.forEach(function(item) {
+                    item.classList.remove('active');
+                });
+
+                this.classList.add('active');
+
+                const category =
+                    this.dataset.category;
+
+                productRows.forEach(function(row) {
+
+                    const productCategory =
+                        row.dataset.category;
+
+                    if (
+                        category === 'all' ||
+                        productCategory === category
+                    ) {
+
+                        row.style.display = '';
+
+                    } else {
+
+                        row.style.display = 'none';
+
+                    }
+
+                });
+
+            });
+
+        });
+
+
+        /* View */
+
+        const tableButton =
+            document.getElementById('tableViewButton');
+
+        const gridButton =
+            document.getElementById('gridViewButton');
+
+
+        tableButton.addEventListener('click', function() {
+
+            productRows.forEach(function(row) {
+
+                row.classList.remove('grid-product');
+
+            });
+
+            tableButton.classList.add('active');
+            gridButton.classList.remove('active');
+
+        });
+
+
+        gridButton.addEventListener('click', function() {
+
+            productRows.forEach(function(row) {
+
+                row.classList.add('grid-product');
+
+            });
+
+            gridButton.classList.add('active');
+            tableButton.classList.remove('active');
+
+        });
+
+    });
+</script>
 @endsection

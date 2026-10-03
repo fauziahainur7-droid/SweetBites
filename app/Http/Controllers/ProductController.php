@@ -14,9 +14,15 @@ class ProductController extends Controller
     {
         $products = Product::with('category')
             ->latest()
-            ->paginate(10);
+            ->get();
 
-        return view('admin.products.index', compact('products'));
+        $totalProducts = Product::count();
+
+        $lowStockProducts = Product::where('stok', '<=', 5)->count();
+
+        $categories = Category::withCount('products')->get();
+
+        return view('admin.products.index', compact('products', 'totalProducts', 'lowStockProducts', 'categories'));
     }
 
     // ADMIN - form tambah
