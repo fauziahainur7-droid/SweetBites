@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Cart;
 use App\Models\OrderDetail;
 use App\Models\Product;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -77,10 +78,13 @@ class OrderController extends Controller
                     'Keranjang masih kosong!'
                 );
         }
+        $subtotal = $carts->sum(function ($cart) {
+            return $cart->product->harga * $cart->jumlah;
+        });
 
         return view(
             'user.checkout.index',
-            compact('carts')
+            compact('carts', 'subtotal')
         );
     }
 
@@ -151,26 +155,26 @@ class OrderController extends Controller
                 'user_id' => Auth::id(),
 
                 'kode_pesanan' =>
-                    'ORD-' .
+                'ORD-' .
                     date('YmdHis') .
                     '-' .
                     strtoupper(substr(uniqid(), -5)),
 
                 'alamat_pengirim' =>
-                    $data['alamat_pengirim'],
+                $data['alamat_pengirim'],
 
                 'metode_pengiriman' =>
-                    $data['metode_pengiriman'],
+                $data['metode_pengiriman'],
 
                 'metode_pembayaran' =>
-                    $data['metode_pembayaran'],
+                $data['metode_pembayaran'],
 
                 // COD langsung diproses.
                 // Transfer dan E-Wallet menunggu pembayaran.
                 'status' =>
-                    $data['metode_pembayaran'] === 'COD'
-                        ? 'diproses'
-                        : 'menunggu',
+                $data['metode_pembayaran'] === 'COD'
+                    ? 'diproses'
+                    : 'menunggu',
 
                 'total_harga' => $total,
             ]);
@@ -181,19 +185,19 @@ class OrderController extends Controller
 
                 OrderDetail::create([
                     'order_id' =>
-                        $order->id,
+                    $order->id,
 
                     'produk_id' =>
-                        $cart->product_id,
+                    $cart->product_id,
 
                     'jumlah' =>
-                        $cart->jumlah,
+                    $cart->jumlah,
 
                     'harga' =>
-                        $cart->product->harga,
+                    $cart->product->harga,
 
                     'subtotal' =>
-                        $cart->product->harga *
+                    $cart->product->harga *
                         $cart->jumlah,
                 ]);
 
@@ -205,12 +209,24 @@ class OrderController extends Controller
                 );
             }
 
-
             // Menghapus semua isi keranjang setelah pesanan dibuat
             Cart::where(
                 'user_id',
                 Auth::id()
             )->delete();
+
+
+            // Membuat data pembayaran untuk COD
+            if ($data['metode_pembayaran'] === 'COD') {
+
+                Payment::create([
+                    'order_id' => $order->id,
+                    'metode_pembayaran' => 'COD',
+                    'total_bayar' => $total,
+                    'bukti_pembayaran' => null,
+                    'status' => 'menunggu',
+                ]);
+            }
 
 
             DB::commit();
@@ -241,8 +257,6 @@ class OrderController extends Controller
                     'success',
                     'Pesanan berhasil dibuat. Silakan upload bukti pembayaran.'
                 );
-
-
         } catch (\Exception $e) {
 
             // Membatalkan transaksi jika terjadi kesalahan
@@ -314,8 +328,6 @@ class OrderController extends Controller
                     'success',
                     'Pesanan berhasil dibatalkan.'
                 );
-
-
         } catch (\Exception $e) {
 
             // Membatalkan transaksi jika terjadi kesalahan

@@ -3,236 +3,608 @@
 @section('title', 'Riwayat Pesanan')
 
 @section('content')
+<div class="orders-page">
 
-<h2>Riwayat Pesanan Saya</h2>
+    <div class="orders-container">
 
-<hr>
+        {{-- HEADER --}}
+        <section class="orders-overview">
 
-<div class="row mb-3">
+            <div class="orders-heading">
 
-    <div class="col-md-5">
-        <input
-            type="text"
-            id="searchOrder"
-            class="form-control"
-            placeholder="Cari Pesanan....">
-    </div>
+                <div class="orders-label">
+                    AKTIVITAS PEMBELIAN
+                </div>
 
-    <div class="col-md-5">
-        <select
-            id="filterStatus"
-            class="form-control">
-            <option value="">Status Semua</option>
-            <option value="menunggu">Menunggu</option>
-            <option value="diproses">Diproses</option>
-            <option value="siap">Siap</option>
-            <option value="selesai">Selesai</option>
-            <option value="batal">Batal</option>
-        </select>
-    </div>
+                <h1>Riwayat Pesanan Saya</h1>
 
-</div>
+                <p>
+                    Kelola, tinjau faktur, dan lacak sajian pesanan lezat Anda secara berkala.
+                </p>
+
+            </div>
 
 
-<div class="card">
+            {{-- STATISTIK --}}
+            <div class="orders-stat-grid">
 
-    <div class="card-body">
+                {{-- TOTAL PESANAN --}}
+                <div class="orders-stat-card">
 
-        <div class="table-responsive">
+                    <div>
+                        <span class="stat-title">
+                            TOTAL PESANAN
+                        </span>
 
-            <table class="table table-bordered align-middle">
+                        <strong class="stat-number">
+                            {{ $orders->count() }}
+                        </strong>
 
-                <thead>
+                        <span class="stat-description">
+                            Seluruh transaksi terdaftar
+                        </span>
+                    </div>
 
-                    <tr>
-                        <th>No</th>
-                        <th>No. Pesanan</th>
-                        <th>Tanggal</th>
-                        <th>Total</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                    </tr>
+                    <div class="stat-icon">
+                        <i class="bi bi-bag"></i>
+                    </div>
 
-                </thead>
+                </div>
 
-                <tbody id="orderTable">
 
-                    @forelse($orders as $order)
+                {{-- MENUNGGU --}}
+                <div class="orders-stat-card">
 
-                    <tr
-                        class="order-row"
-                        data-status="{{ $order->status }}"
-                        data-search="{{ strtolower($order->kode_pesanan) }}">
+                    <div>
+                        <span class="stat-title">
+                            MENUNGGU
+                        </span>
 
-                        <td>
-                            {{ $loop->iteration }}.
-                        </td>
+                        <strong class="stat-number">
+                            {{ $orders->where('status', 'menunggu')->count() }}
+                        </strong>
 
-                        <td>
-                            {{ $order->kode_pesanan }}
-                        </td>
+                        <span class="stat-description">
+                            Pesanan perlu diproses
+                        </span>
+                    </div>
 
-                        <td>
-                            {{ $order->created_at->format('d/m/Y') }}
-                        </td>
+                    <div class="stat-icon">
+                        <i class="bi bi-clock"></i>
+                    </div>
 
-                        <td>
-                            Rp {{ number_format($order->total_harga, 0, ',', '.') }}
-                        </td>
+                </div>
 
-                        <td>
 
-                            @if($order->status === 'selesai')
+                {{-- TOTAL BELANJA --}}
+                <div class="orders-stat-card">
 
-                            <span class="badge bg-success">
-                                Selesai
-                            </span>
+                    <div>
+                        <span class="stat-title">
+                            TOTAL BELANJA
+                        </span>
 
-                            @elseif($order->status === 'batal')
+                        <strong class="stat-number stat-price">
+                            Rp {{ number_format($orders->sum('total_harga'), 0, ',', '.') }}
+                        </strong>
 
-                            <span class="badge bg-danger">
-                                Batal
-                            </span>
+                        <span class="stat-description">
+                            Semua transaksi
+                        </span>
+                    </div>
 
-                            @elseif($order->status === 'diproses')
+                    <div class="stat-icon">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
 
-                            <span class="badge bg-primary">
-                                Diproses
-                            </span>
+                </div>
 
-                            @elseif($order->status === 'siap')
+            </div>
 
-                            <span class="badge bg-info text-dark">
-                                Siap
-                            </span>
+        </section>
 
-                            @else
 
-                            <span class="badge bg-warning text-dark">
+        {{-- CARD DAFTAR PESANAN --}}
+        <section class="orders-list-card">
+
+            {{-- SEARCH + FILTER --}}
+            <div class="orders-toolbar">
+
+                <div class="orders-toolbar-title">
+
+                    <div class="orders-list-icon">
+                        <i class="bi bi-receipt"></i>
+                    </div>
+
+                    <div>
+                        <h2>Daftar Pesanan</h2>
+
+                        <p>
+                            Lihat semua transaksi kamu
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="orders-controls">
+
+                    {{-- SEARCH --}}
+                    <div class="orders-search">
+
+                        <i class="bi bi-search"></i>
+
+                        <input
+                            type="text"
+                            id="orderSearch"
+                            placeholder="Cari nomor pesanan..."
+                        >
+
+                    </div>
+
+
+                    {{-- FILTER STATUS --}}
+                    <div class="orders-filter">
+
+                        <select id="orderStatusFilter">
+
+                            <option value="semua">
+                                Semua Status
+                            </option>
+
+                            <option value="menunggu">
                                 Menunggu
-                            </span>
+                            </option>
 
-                            @endif
+                            <option value="diproses">
+                                Diproses
+                            </option>
 
-                        </td>
+                            <option value="siap">
+                                Siap
+                            </option>
 
-                        <td>
+                            <option value="selesai">
+                                Selesai
+                            </option>
 
-                            {{-- Tombol Detail --}}
-                            <a
-                                href="{{ route('orders.show', $order->id) }}"
-                                class="btn btn-dark btn-sm">
-                                Detail
-                            </a>
+                            <option value="batal">
+                                Batal
+                            </option>
+
+                        </select>
+
+                        <i class="bi bi-chevron-down"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
 
 
-                            {{-- Tombol Cetak Invoice --}}
-                            <a
-                                href="{{ route('orders.invoice', $order->id) }}"
-                                target="_blank"
-                                class="btn btn-secondary btn-sm">
-                                Cetak Invoice
-                            </a>
+            {{-- TABLE --}}
+            <div class="orders-table-wrapper">
+
+                <table class="orders-table">
+
+                    <thead>
+
+                        <tr>
+                            <th class="column-no">NO</th>
+                            <th>NOMOR PESANAN</th>
+                            <th>TANGGAL</th>
+                            <th>TOTAL</th>
+                            <th class="column-status">STATUS</th>
+                            <th class="column-action">AKSI</th>
+                        </tr>
+
+                    </thead>
 
 
-                            {{-- Tombol Beri Ulasan --}}
-                            @if($order->status === 'selesai')
+                    <tbody>
 
-                            <a
-                                href="{{ route('reviews.create', $order->id) }}"
-                                class="btn btn-success btn-sm">
-                                Beri Ulasan
-                            </a>
+                        @forelse($orders as $index => $order)
 
-                            @endif
+                            <tr
+                                class="order-row"
+                                data-order="{{ $order->kode_pesanan ?? 'ORD-' . str_pad($order->id, 6, '0', STR_PAD_LEFT) }} {{ $order->id }}"
+                                data-status="{{ $order->status }}"
+                            >
 
-                        </td>
+                                {{-- NO --}}
+                                <td class="order-no">
+                                    {{ $index + 1 }}.
+                                </td>
 
-                    </tr>
 
-                    @empty
+                                {{-- NOMOR PESANAN --}}
+                                <td class="order-number-cell">
 
-                    <tr>
+                                    <div class="order-number-row">
 
-                        <td
-                            colspan="6"
-                            class="text-center">
-                            Belum ada pesanan
-                        </td>
+                                        <span class="order-number">
+                                            {{ $order->kode_pesanan ?? 'ORD-' . str_pad($order->id, 6, '0', STR_PAD_LEFT) }}
+                                        </span>
 
-                    </tr>
+                                        <button
+                                            type="button"
+                                            class="copy-order"
+                                            title="Salin nomor pesanan"
+                                            onclick="copyOrderNumber(this)"
+                                        >
+                                            <i class="bi bi-copy"></i>
+                                        </button>
 
-                    @endforelse
+                                    </div>
 
-                </tbody>
+                                    <div class="order-information">
 
-            </table>
+                                        {{ $order->jumlah_item ?? $order->orderDetails->sum('jumlah') ?? 1 }}
+                                        Item
 
-        </div>
+                                        @if(!empty($order->metode_pembayaran))
+
+                                            • {{ $order->metode_pembayaran }}
+
+                                        @else
+
+                                            • Pembayaran SweetBites
+
+                                        @endif
+
+                                    </div>
+
+                                </td>
+
+
+                                {{-- TANGGAL --}}
+                                <td class="order-date">
+
+                                    {{ $order->created_at->format('d M Y') }}
+
+                                    <small>
+                                        {{ $order->created_at->format('H:i') }}
+                                    </small>
+
+                                </td>
+
+
+                                {{-- TOTAL --}}
+                                <td class="order-total">
+
+                                    Rp {{ number_format($order->total_harga, 0, ',', '.') }}
+
+                                </td>
+
+
+                                {{-- STATUS --}}
+                                <td class="order-status-cell">
+
+                                    @if($order->status == 'menunggu')
+
+                                        <span class="order-status status-waiting">
+                                            Menunggu
+                                        </span>
+
+
+                                    @elseif($order->status == 'diproses')
+
+                                        <span class="order-status status-process">
+                                            Diproses
+                                        </span>
+
+
+                                    @elseif($order->status == 'siap')
+
+                                        <span class="order-status status-ready">
+                                            Siap
+                                        </span>
+
+
+                                    @elseif($order->status == 'selesai')
+
+                                        <span class="order-status status-success">
+                                            <i class="bi bi-check-lg"></i>
+                                            Selesai
+                                        </span>
+
+
+                                    @elseif($order->status == 'batal')
+
+                                        <span class="order-status status-cancel">
+                                            <span></span>
+                                            Batal
+                                        </span>
+
+
+                                    @else
+
+                                        <span class="order-status status-cancel">
+                                            <span></span>
+                                            {{ ucfirst($order->status) }}
+                                        </span>
+
+                                    @endif
+
+                                </td>
+
+
+                                {{-- AKSI --}}
+                                <td class="order-actions">
+
+                                    <div class="order-buttons">
+
+                                        {{-- DETAIL --}}
+                                        <a
+                                            href="{{ route('orders.show', $order->id) }}"
+                                            class="btn-order btn-detail"
+                                        >
+                                            Detail
+                                        </a>
+
+
+                                        {{-- CETAK INVOICE --}}
+                                        <a
+                                            href="{{ route('orders.invoice', $order->id) }}"
+                                            class="btn-order btn-invoice"
+                                        >
+                                            Cetak Invoice
+                                        </a>
+
+
+                                        {{-- BERI ULASAN --}}
+                                        @if($order->status == 'selesai')
+
+                                            <a
+                                                href="{{ route('reviews.create', $order->id) }}"
+                                                class="btn-order btn-review"
+                                            >
+                                                Beri Ulasan
+                                            </a>
+
+                                        @endif
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+                        @empty
+
+                            <tr>
+
+                                <td colspan="6">
+
+                                    <div class="empty-orders">
+
+                                        <div class="empty-orders-icon">
+                                            <i class="bi bi-bag-x"></i>
+                                        </div>
+
+                                        <h3>
+                                            Belum Ada Pesanan
+                                        </h3>
+
+                                        <p>
+                                            Kamu belum memiliki riwayat pesanan.
+                                        </p>
+
+                                        <a
+                                            href="{{ url('/catalog') }}"
+                                            class="empty-orders-button"
+                                        >
+                                            Lihat Katalog
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        @endforelse
+
+
+                        {{-- PESAN JIKA HASIL FILTER KOSONG --}}
+                        <tr id="noOrderResult" style="display: none;">
+
+                            <td colspan="6">
+
+                                <div class="empty-orders">
+
+                                    <div class="empty-orders-icon">
+                                        <i class="bi bi-search"></i>
+                                    </div>
+
+                                    <h3>
+                                        Pesanan Tidak Ditemukan
+                                    </h3>
+
+                                    <p>
+                                        Tidak ada pesanan yang sesuai dengan pencarian atau filter.
+                                    </p>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            {{-- FOOTER TABLE --}}
+            <div class="orders-table-footer">
+
+                <div class="orders-summary">
+
+                    <div class="summary-box">
+
+                        <span>
+                            Total Pesanan:
+                        </span>
+
+                        <strong>
+                            {{ $orders->count() }}
+                        </strong>
+
+                    </div>
+
+
+                    <span class="summary-divider">
+                        |
+                    </span>
+
+
+                    <div class="summary-box">
+
+                        <span>
+                            Total Belanja:
+                        </span>
+
+                        <strong class="summary-price">
+                            Rp {{ number_format($orders->sum('total_harga'), 0, ',', '.') }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
 
     </div>
 
 </div>
 
 
-<div class="text-center mt-4">
-
-    <strong>
-        Total Pesanan:
-        {{ $orders->count() }}
-    </strong>
-
-    <span class="mx-2">|</span>
-
-    <strong>
-        Total Belanja:
-        Rp {{ number_format($orders->sum('total_harga'), 0, ',', '.') }}
-    </strong>
-
-</div>
-
-
+{{-- JAVASCRIPT SEARCH + FILTER --}}
 <script>
-    document.getElementById('searchOrder').addEventListener('keyup', function() {
 
-        let keyword = this.value.toLowerCase();
+document.addEventListener('DOMContentLoaded', function () {
 
-        let rows = document.querySelectorAll('.order-row');
+    const searchInput = document.getElementById('orderSearch');
 
-        rows.forEach(function(row) {
+    const statusFilter = document.getElementById('orderStatusFilter');
 
-            let order = row.getAttribute('data-search');
+    const orderRows = document.querySelectorAll('.order-row');
 
-            if (order.includes(keyword)) {
+    const noOrderResult = document.getElementById('noOrderResult');
+
+
+    function filterOrders() {
+
+        const searchValue =
+            searchInput.value.toLowerCase().trim();
+
+        const statusValue =
+            statusFilter.value.toLowerCase();
+
+        let visibleOrders = 0;
+
+
+        orderRows.forEach(function (row) {
+
+            const orderData =
+                row.dataset.order.toLowerCase();
+
+            const orderStatus =
+                row.dataset.status.toLowerCase();
+
+
+            const matchSearch =
+                orderData.includes(searchValue);
+
+
+            const matchStatus =
+                statusValue === 'semua' ||
+                orderStatus === statusValue;
+
+
+            if (matchSearch && matchStatus) {
+
                 row.style.display = '';
+
+                visibleOrders++;
+
             } else {
+
                 row.style.display = 'none';
+
             }
 
         });
 
-    });
+
+        if (noOrderResult) {
+
+            noOrderResult.style.display =
+                visibleOrders === 0 ? '' : 'none';
+
+        }
+
+    }
 
 
-    document.getElementById('filterStatus').addEventListener('change', function() {
+    searchInput.addEventListener(
+        'input',
+        filterOrders
+    );
 
-        let status = this.value;
 
-        let rows = document.querySelectorAll('.order-row');
+    statusFilter.addEventListener(
+        'change',
+        filterOrders
+    );
 
-        rows.forEach(function(row) {
+});
 
-            let rowStatus = row.getAttribute('data-status');
 
-            if (status === '' || rowStatus === status) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
+/* COPY NOMOR PESANAN */
+function copyOrderNumber(button) {
+
+    const orderNumber =
+        button
+            .closest('.order-number-row')
+            .querySelector('.order-number')
+            .innerText
+            .trim();
+
+
+    navigator.clipboard.writeText(orderNumber)
+        .then(function () {
+
+            const originalIcon =
+                button.innerHTML;
+
+
+            button.innerHTML =
+                '<i class="bi bi-check-lg"></i>';
+
+
+            setTimeout(function () {
+
+                button.innerHTML =
+                    originalIcon;
+
+            }, 1500);
+
+        })
+        .catch(function () {
+
+            alert('Nomor pesanan: ' + orderNumber);
 
         });
 
-    });
+}
+
 </script>
-
 @endsection

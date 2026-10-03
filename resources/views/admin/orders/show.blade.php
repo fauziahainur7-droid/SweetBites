@@ -4,425 +4,880 @@
 
 @section('content')
 
-<a href="{{ route('admin.orders.index') }}"
-   class="btn btn-secondary mb-3">
-    ← Kembali
-</a>
+<div class="order-detail-page">
 
-<div class="card">
+    {{-- Topbar --}}
+    <header class="topbar">
+        <div class="topbar-left">
 
-    <div class="card-body">
+            <a
+                class="back-button"
+                href="{{ route('admin.orders.index') }}"
+            >
+                <i class="fa-solid fa-arrow-left"></i>
+                Kembali ke Daftar Pesanan
+            </a>
 
-        <h2>Detail Pesanan</h2>
+            <span class="divider">|</span>
 
-        <p>
-            <strong>Kode:</strong>
-            {{ $order->kode_pesanan }}
-        </p>
+            <div class="order-id-wrap">
+                <span class="order-label">ORDER ID</span>
 
-        <p>
-            <strong>Pelanggan:</strong>
-            {{ $order->user->name ?? '-' }}
-        </p>
-
-        <p>
-            <strong>Alamat:</strong>
-            {{ $order->alamat_pengirim }}
-        </p>
-
-        <p>
-            <strong>Metode Pengiriman:</strong>
-            {{ $order->metode_pengiriman }}
-        </p>
-
-        <p>
-            <strong>Metode Pembayaran:</strong>
-            {{ $order->metode_pembayaran }}
-        </p>
-
-        <p>
-            <strong>Total:</strong>
-            Rp {{ number_format($order->total_harga, 0, ',', '.') }}
-        </p>
-
-        <p>
-            <strong>Status Pesanan:</strong>
-
-            @if($order->status === 'selesai')
-
-                <span class="badge bg-success">
-                    Selesai
+                <span class="order-id">
+                    {{ $order->kode_pesanan }}
                 </span>
+            </div>
 
-            @elseif($order->status === 'batal')
+        </div>
 
-                <span class="badge bg-danger">
-                    Dibatalkan
-                </span>
+        <div class="topbar-right">
 
-            @elseif($order->status === 'diproses')
+            <span class="status-pill">
+                <i></i>
+                Status:
+                {{ ucfirst($order->status) }}
+            </span>
 
-                <span class="badge bg-primary">
-                    Diproses
-                </span>
+            <button
+                class="icon-button"
+                type="button"
+                title="Refresh"
+                onclick="window.location.reload()"
+            >
+                <i class="fa-solid fa-arrows-rotate"></i>
+            </button>
 
-            @elseif($order->status === 'siap')
+        </div>
+    </header>
 
-                <span class="badge bg-info text-dark">
-                    Siap
-                </span>
 
-            @else
+    <div class="content">
 
-                <span class="badge bg-warning text-dark">
-                    Menunggu
-                </span>
+        {{-- Order Summary --}}
+        <section class="order-summary card">
 
-            @endif
+            <div class="customer">
 
-        </p>
+                <div class="customer-icon">
+                    <i class="fa-solid fa-user"></i>
+                </div>
 
-        <form
-            action="{{ route('admin.orders.update', $order->id) }}"
-            method="POST"
-            class="mt-3"
-        >
+                <div>
 
-            @csrf
-            @method('PUT')
+                    <div class="customer-name">
 
-            <div class="row">
+                        <h2>
+                            {{ $order->user->name ?? 'Pelanggan' }}
+                        </h2>
 
-                <div class="col-md-5">
+                        <span>
+                            Pelanggan Terdaftar
+                        </span>
 
-                    <label class="form-label">
-                        Status Pesanan
-                    </label>
+                    </div>
 
-                    <select
-                        name="status"
-                        class="form-control"
-                        required
-                    >
+                    <p>
+                        <i class="fa-regular fa-clock"></i>
 
-                        <option
-                            value="menunggu"
-                            {{ $order->status === 'menunggu' ? 'selected' : '' }}
-                        >
-                            Menunggu
-                        </option>
+                        Dipesan:
+                        {{ $order->created_at->format('d M Y, H:i') }}
+                        WIB
 
-                        <option
-                            value="diproses"
-                            {{ $order->status === 'diproses' ? 'selected' : '' }}
-                        >
-                            Diproses
-                        </option>
+                        <em>•</em>
 
-                        <option
-                            value="siap"
-                            {{ $order->status === 'siap' ? 'selected' : '' }}
-                        >
-                            Siap
-                        </option>
+                        <i class="fa-solid fa-truck-pickup"></i>
 
-                        <option
-                            value="selesai"
-                            {{ $order->status === 'selesai' ? 'selected' : '' }}
-                        >
-                            Selesai
-                        </option>
-
-                        <option
-                            value="batal"
-                            {{ $order->status === 'batal' ? 'selected' : '' }}
-                        >
-                            Batal
-                        </option>
-
-                    </select>
+                        {{ $order->metode_pengiriman ?? 'Diantar' }}
+                    </p>
 
                 </div>
 
-                <div class="col-md-3 d-flex align-items-end">
+            </div>
 
-                    <button
-                        type="submit"
-                        class="btn btn-dark"
-                    >
-                        Update
+
+            <div class="summary-right">
+
+                <div class="summary-stat">
+
+                    <small>Total Tagihan</small>
+
+                    <strong>
+                        Rp {{ number_format($order->total_harga, 0, ',', '.') }}
+                    </strong>
+
+                </div>
+
+                <div class="vertical-line"></div>
+
+                <div class="summary-stat payment">
+
+                    <small>Metode Bayar</small>
+
+                    <strong>
+
+                        @if(strtolower($order->metode_pembayaran) === 'cod')
+
+                            <i class="fa-solid fa-money-bill-wave"></i>
+                            COD
+
+                        @else
+
+                            <i class="fa-solid fa-building-columns"></i>
+                            {{ $order->metode_pembayaran }}
+
+                        @endif
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        {{-- Pembayaran --}}
+        @if(strtolower($order->metode_pembayaran) === 'cod')
+
+            {{-- COD langsung verifikasi --}}
+            <section class="card cod-verification-card">
+
+                <div class="cod-verification-content">
+
+                    <div class="cod-icon">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                    </div>
+
+                    <div class="cod-info">
+
+                        <h3>
+                            Pembayaran COD
+                        </h3>
+
+                        <p>
+                            Pesanan ini menggunakan metode
+                            <strong>Cash on Delivery (COD)</strong>.
+                            Tidak diperlukan bukti pembayaran.
+                            Pesanan dapat langsung diteruskan ke dapur.
+                        </p>
+
+                    </div>
+
+                    <div class="cod-action">
+
+                        <form
+                            action="{{ route('admin.orders.update', $order->id) }}"
+                            method="POST"
+                        >
+                            @csrf
+                            @method('PUT')
+
+                            <input
+                                type="hidden"
+                                name="status"
+                                value="diproses"
+                            >
+
+                            <button
+                                type="submit"
+                                class="verify-button"
+                            >
+                                <i class="fa-solid fa-circle-check"></i>
+                                Verifikasi Pesanan
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        @else
+
+            {{-- Transfer / pembayaran non COD --}}
+            <div class="verification-grid">
+
+                {{-- Bukti Pembayaran --}}
+                <section class="left-column">
+
+                    <div class="card proof-card">
+
+                        <div class="card-header">
+
+                            <div class="header-title">
+
+                                <div class="mini-icon">
+                                    <i class="fa-solid fa-receipt"></i>
+                                </div>
+
+                                <div>
+
+                                    <h3>
+                                        Bukti Pembayaran Terunggah
+                                    </h3>
+
+                                    <p>
+                                        File format: image.png
+                                        (Diterima via web)
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            @if($order->payment && $order->payment->bukti_pembayaran)
+
+                                <div class="header-actions">
+
+                                    <a
+                                        href="{{ route('admin.payments.proof', $order->payment->id) }}"
+                                        target="_blank"
+                                    >
+                                        <i class="fa-solid fa-up-right-from-square"></i>
+                                        Buka Penuh
+                                    </a>
+
+                                    <a
+                                        class="dark-btn"
+                                        href="{{ route('admin.payments.proof', $order->payment->id) }}"
+                                        download
+                                    >
+                                        <i class="fa-solid fa-download"></i>
+                                        Unduh
+                                    </a>
+
+                                </div>
+
+                            @endif
+
+                        </div>
+
+
+                        <div class="proof-preview">
+
+                            <div class="proof-image-wrap">
+
+                                @if($order->payment && $order->payment->bukti_pembayaran)
+
+                                    <img
+                                        src="{{ route('admin.payments.proof', $order->payment->id) }}"
+                                        alt="Bukti Pembayaran"
+                                    >
+
+                                @else
+
+                                    <div class="empty-proof">
+
+                                        <i class="fa-regular fa-image"></i>
+
+                                        <strong>
+                                            Belum ada bukti pembayaran
+                                        </strong>
+
+                                        <span>
+                                            Pelanggan belum mengunggah bukti pembayaran.
+                                        </span>
+
+                                    </div>
+
+                                @endif
+
+                            </div>
+
+                        </div>
+
+
+                        @if($order->payment)
+
+                            <div class="bank-check">
+
+                                <div class="check-head">
+
+                                    <h4>
+                                        DATA MUTASI & PARAMETER COCOK
+                                    </h4>
+
+                                    <span>
+                                        <i class="fa-solid fa-circle-check"></i>
+                                        Nominal Sesuai
+                                    </span>
+
+                                </div>
+
+
+                                <div class="check-grid">
+
+                                    <div class="check-item">
+
+                                        <small>
+                                            Bank Tujuan Toko
+                                        </small>
+
+                                        <strong>
+                                            <i class="fa-solid fa-landmark"></i>
+                                            BCA - 7820199201
+                                        </strong>
+
+                                        <p>
+                                            a/n SweetBites Bakery Group
+                                        </p>
+
+                                    </div>
+
+
+                                    <div class="check-item">
+
+                                        <small>
+                                            Nama Pengirim
+                                        </small>
+
+                                        <strong>
+                                            <i class="fa-regular fa-user"></i>
+                                            {{ $order->user->name ?? '-' }}
+                                        </strong>
+
+                                        <p>
+                                            Data pembayaran pelanggan
+                                        </p>
+
+                                    </div>
+
+
+                                    <div class="check-item">
+
+                                        <small>
+                                            Waktu Transfer
+                                        </small>
+
+                                        <strong>
+                                            <i class="fa-regular fa-calendar-check"></i>
+
+                                            {{ $order->payment->created_at
+                                                ? $order->payment->created_at->format('d M Y, H:i')
+                                                : '-'
+                                            }}
+                                            WIB
+                                        </strong>
+
+                                        <p>
+                                            Waktu pembayaran tercatat
+                                        </p>
+
+                                    </div>
+
+
+                                    <div class="check-item amount">
+
+                                        <small>
+                                            Nominal Tertera
+                                        </small>
+
+                                        <strong>
+                                            <i class="fa-solid fa-coins"></i>
+
+                                            Rp
+                                            {{ number_format(
+                                                $order->payment->total_bayar ?? $order->total_harga,
+                                                0,
+                                                ',',
+                                                '.'
+                                            ) }}
+                                        </strong>
+
+                                        <p>
+                                            <i class="fa-solid fa-check"></i>
+                                            Nominal pembayaran
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        @endif
+
+                    </div>
+
+                </section>
+
+
+                {{-- Tindakan Verifikasi --}}
+                <section class="right-column">
+
+                    <div class="card verify-card">
+
+                        <div class="verify-head">
+
+                            <h3>
+                                Tindakan Verifikasi
+                            </h3>
+                            
+                        </div>
+
+
+                        @if($order->payment)
+
+                            <form
+                                class="verify-form"
+                                action="{{ route('admin.payments.update-status', $order->payment->id) }}"
+                                method="POST"
+                            >
+
+                                @csrf
+                                @method('PUT')
+
+
+                                <label class="field-label">
+                                    Pilih Status Baru
+                                </label>
+
+
+                                <label class="radio-card selected">
+
+                                    <span class="radio-left">
+
+                                        <input
+                                            checked
+                                            type="radio"
+                                            name="status"
+                                            value="lunas"
+                                        >
+
+                                        <span>
+
+                                            <strong>
+                                                Verifikasi & Terima
+                                            </strong>
+
+                                            <small>
+                                                Dana valid, teruskan pesanan ke dapur
+                                            </small>
+
+                                        </span>
+
+                                    </span>
+
+                                    <i class="fa-solid fa-circle-check"></i>
+
+                                </label>
+
+
+                                <label class="radio-card">
+
+                                    <span class="radio-left">
+
+                                        <input
+                                            type="radio"
+                                            name="status"
+                                            value="verifikasi"
+                                        >
+
+                                        <span>
+
+                                            <strong>
+                                                Bukti Tidak Jelas / Buram
+                                            </strong>
+
+                                            <small>
+                                                Pembayaran masih perlu diperiksa
+                                            </small>
+
+                                        </span>
+
+                                    </span>
+
+                                    <i class="fa-solid fa-circle-question"></i>
+
+                                </label>
+
+
+                                <label class="radio-card reject">
+
+                                    <span class="radio-left">
+
+                                        <input
+                                            type="radio"
+                                            name="status"
+                                            value="gagal"
+                                        >
+
+                                        <span>
+
+                                            <strong>
+                                                Tolak Pembayaran
+                                            </strong>
+
+                                            <small>
+                                                Nominal salah atau bukti tidak valid
+                                            </small>
+
+                                        </span>
+
+                                    </span>
+
+                                    <i class="fa-solid fa-circle-xmark"></i>
+
+                                </label>
+
+
+                                <div class="notes">
+
+                                    <label
+                                        class="field-label"
+                                        for="notes"
+                                    >
+                                        Catatan Internal Admin (Opsional)
+                                    </label>
+
+                                    <textarea
+                                        id="notes"
+                                        name="catatan"
+                                        rows="3"
+                                        placeholder="Tambahkan catatan jika diperlukan..."
+                                    ></textarea>
+
+                                </div>
+
+
+                                <button
+                                    class="verify-button"
+                                    type="submit"
+                                >
+                                    <i class="fa-solid fa-stamp"></i>
+                                    Verifikasi Pembayaran Valid
+                                </button>
+
+                            </form>
+
+                        @else
+
+                            <div class="empty-payment">
+
+                                <i class="fa-solid fa-circle-exclamation"></i>
+
+                                <strong>
+                                    Belum ada data pembayaran
+                                </strong>
+
+                                <span>
+                                    Pesanan ini belum memiliki data pembayaran.
+                                </span>
+
+                            </div>
+
+                        @endif
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        @endif
+
+
+        {{-- Rincian Item --}}
+        <section class="card order-items">
+
+            <div class="items-header">
+
+                <div class="header-title">
+
+                    <div class="mini-icon cake">
+                        <i class="fa-solid fa-cake-candles"></i>
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Rincian Item Dipesan
+                        </h3>
+
+                        <p>
+                            Daftar lengkap produk yang dipesan oleh pelanggan
+                            dalam pesanan ini
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="items-actions">
+
+                    <span class="ready">
+                        <i class="fa-solid fa-check"></i>
+                        Semua Bahan Siap
+                    </span>
+
+                    <button type="button">
+                        <i class="fa-solid fa-circle-check"></i>
+                        Verifikasi Item Pesanan
                     </button>
 
                 </div>
 
             </div>
 
-        </form>
 
-    </div>
+            <div class="table-wrap">
 
-</div>
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Produk & Varian</th>
+                            <th class="center">Jumlah</th>
+                            <th class="right">Harga Satuan</th>
+                            <th class="right">Subtotal</th>
+                        </tr>
+
+                    </thead>
 
 
-{{-- INFORMASI PEMBAYARAN --}}
+                    <tbody>
 
-<div class="card mt-3">
+                        @forelse($order->orderDetails as $detail)
 
-    <div class="card-header">
-        <strong>Informasi Pembayaran</strong>
-    </div>
+                            <tr>
 
-    <div class="card-body">
+                                <td>
 
-        @if($order->metode_pembayaran === 'COD')
+                                    <div class="product">
 
-            <div class="alert alert-info mb-0">
+                                        <span class="product-icon cake-bg">
+                                            <i class="fa-solid fa-cake-candles"></i>
+                                        </span>
 
-                <h5>
-                    Pembayaran COD
-                </h5>
+                                        <span>
 
-                <p class="mb-0">
-                    Pesanan ini menggunakan metode
-                    <strong>Cash on Delivery (COD)</strong>.
-                    Pembayaran dilakukan saat pesanan diterima.
-                </p>
+                                            <strong>
+                                                {{ $detail->product->nama_kue ?? 'Produk' }}
+                                            </strong>
+
+                                            <small>
+                                                Produk Pesanan
+                                            </small>
+
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td class="center">
+                                    {{ $detail->jumlah }}x
+                                </td>
+
+
+                                <td class="right">
+                                    Rp
+                                    {{ number_format($detail->harga, 0, ',', '.') }}
+                                </td>
+
+
+                                <td class="right total-cell">
+                                    Rp
+                                    {{ number_format($detail->subtotal, 0, ',', '.') }}
+                                </td>
+
+                            </tr>
+
+                        @empty
+
+                            <tr>
+
+                                <td
+                                    colspan="4"
+                                    class="empty-items"
+                                >
+                                    Tidak ada item pesanan.
+                                </td>
+
+                            </tr>
+
+                        @endforelse
+
+                    </tbody>
+
+                </table>
 
             </div>
 
-        @elseif($order->payment)
 
-            <p>
-                <strong>Metode Pembayaran:</strong>
-                {{ $order->payment->metode_pembayaran ?? $order->metode_pembayaran }}
-            </p>
+            {{-- Footer Item --}}
+            <div class="items-footer">
 
-            <p>
-                <strong>Total Bayar:</strong>
-                Rp {{ number_format($order->payment->total_bayar, 0, ',', '.') }}
-            </p>
+                <div class="pickup-info">
 
-            <p>
-                <strong>Status Pembayaran:</strong>
+                    <p>
 
-                @if($order->payment->status === 'lunas')
+                        <i class="fa-solid fa-truck-pickup"></i>
 
-                    <span class="badge bg-success">
-                        Lunas
-                    </span>
+                        Metode Pengambilan:
 
-                @elseif($order->payment->status === 'verifikasi')
+                        <strong>
+                            {{ $order->metode_pengiriman ?? 'Diantar' }}
+                        </strong>
 
-                    <span class="badge bg-primary">
-                        Verifikasi
-                    </span>
+                    </p>
 
-                @elseif($order->payment->status === 'gagal')
+                    <small>
+                        Waktu estimasi pengambilan mengikuti data pesanan.
+                    </small>
 
-                    <span class="badge bg-danger">
-                        Gagal
-                    </span>
 
-                @else
+                    <div class="status-row">
 
-                    <span class="badge bg-warning text-dark">
-                        Menunggu
-                    </span>
+                        <strong>
 
-                @endif
+                            <i class="fa-regular fa-calendar-check"></i>
 
-            </p>
+                            Status Pesanan & Dapur:
 
-            <hr>
+                        </strong>
 
-            <h2>
-                Bukti Pembayaran
-            </h2>
 
-            @if($order->payment->bukti_pembayaran)
-
-                <div class="mt-3">
-
-                    <img
-                        src="{{ route('admin.payments.proof', $order->payment->id) }}"
-                        alt="Bukti Pembayaran"
-                        class="img-fluid rounded border"
-                        style="max-width: 600px;"
-                    >
-
-                </div>
-
-            @else
-
-                <div class="alert alert-secondary">
-                    Belum ada bukti pembayaran.
-                </div>
-
-            @endif
-
-            <hr>
-
-            <h2>
-                Verifikasi Pembayaran
-            </h2>
-
-            <form
-                action="{{ route('admin.payments.update-status', $order->payment->id) }}"
-                method="POST"
-                class="mt-3"
-            >
-
-                @csrf
-                @method('PUT')
-
-                <div class="row">
-
-                    <div class="col-md-5">
-
-                        <label class="form-label">
-                            Status Pembayaran
-                        </label>
-
-                        <select
-                            name="status"
-                            class="form-control"
-                            required
+                        <form
+                            class="status-controls"
+                            action="{{ route('admin.orders.update', $order->id) }}"
+                            method="POST"
                         >
 
-                            <option
-                                value="menunggu"
-                                {{ $order->payment->status === 'menunggu' ? 'selected' : '' }}
-                            >
-                                Menunggu
-                            </option>
+                            @csrf
+                            @method('PUT')
 
-                            <option
-                                value="verifikasi"
-                                {{ $order->payment->status === 'verifikasi' ? 'selected' : '' }}
-                            >
-                                Verifikasi
-                            </option>
+                            <select name="status">
 
-                            <option
-                                value="lunas"
-                                {{ $order->payment->status === 'lunas' ? 'selected' : '' }}
-                            >
-                                Lunas
-                            </option>
+                                <option
+                                    value="menunggu"
+                                    {{ $order->status === 'menunggu' ? 'selected' : '' }}
+                                >
+                                    Menunggu
+                                </option>
 
-                            <option
-                                value="gagal"
-                                {{ $order->payment->status === 'gagal' ? 'selected' : '' }}
-                            >
-                                Gagal
-                            </option>
+                                <option
+                                    value="diproses"
+                                    {{ $order->status === 'diproses' ? 'selected' : '' }}
+                                >
+                                    Diproses
+                                </option>
 
-                        </select>
+                                <option
+                                    value="siap"
+                                    {{ $order->status === 'siap' ? 'selected' : '' }}
+                                >
+                                    Siap
+                                </option>
 
-                    </div>
+                                <option
+                                    value="selesai"
+                                    {{ $order->status === 'selesai' ? 'selected' : '' }}
+                                >
+                                    Selesai
+                                </option>
 
-                    <div class="col-md-3 d-flex align-items-end">
+                                <option
+                                    value="batal"
+                                    {{ $order->status === 'batal' ? 'selected' : '' }}
+                                >
+                                    Batal
+                                </option>
 
-                        <button
-                            type="submit"
-                            class="btn btn-dark"
-                        >
-                            Update Status
-                        </button>
+                            </select>
+
+
+                            <button type="submit">
+
+                                <i class="fa-solid fa-arrows-rotate"></i>
+
+                                Update Status Pesanan
+
+                            </button>
+
+                        </form>
+
+
+                        <span class="sync">
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                            Tersinkron otomatis ke dapur
+
+                        </span>
 
                     </div>
 
                 </div>
 
-            </form>
 
-        @else
+                <div class="price-summary">
 
-            <div class="alert alert-warning mb-0">
-                Belum ada data pembayaran.
+                    <div>
+
+                        <span>
+                            Subtotal Produk
+                            ({{ $order->orderDetails->sum('jumlah') }} pcs)
+                        </span>
+
+                        <strong>
+                            Rp
+                            {{ number_format($order->total_harga, 0, ',', '.') }}
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Biaya Pengiriman
+                        </span>
+
+                        <strong class="free">
+                            Gratis
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Pajak Resto
+                        </span>
+
+                        <strong>
+                            Sudah Termasuk
+                        </strong>
+
+                    </div>
+
+
+                    <div class="grand-total">
+
+                        <span>
+                            Total yang harus dibayar
+                        </span>
+
+                        <strong>
+                            Rp
+                            {{ number_format($order->total_harga, 0, ',', '.') }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
             </div>
 
-        @endif
-
-    </div>
-
-</div>
-
-
-{{-- ITEM PESANAN --}}
-
-<div class="card mt-3">
-
-    <div class="card-header">
-        Item Pesanan
-    </div>
-
-    <div class="card-body">
-
-        <div class="table-responsive">
-
-            <table class="table">
-
-                <thead>
-
-                    <tr>
-                        <th>No</th>
-                        <th>Produk</th>
-                        <th>Jumlah</th>
-                        <th>Harga</th>
-                        <th>Subtotal</th>
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    @forelse($order->orderDetails as $detail)
-
-                        <tr>
-
-                            <td>
-                                {{ $loop->iteration }}
-                            </td>
-
-                            <td>
-                                {{ $detail->product->nama_kue ?? '-' }}
-                            </td>
-
-                            <td>
-                                {{ $detail->jumlah }}
-                            </td>
-
-                            <td>
-                                Rp {{ number_format($detail->harga, 0, ',', '.') }}
-                            </td>
-
-                            <td>
-                                Rp {{ number_format($detail->subtotal, 0, ',', '.') }}
-                            </td>
-
-                        </tr>
-
-                    @empty
-
-                        <tr>
-
-                            <td
-                                colspan="5"
-                                class="text-center"
-                            >
-                                Tidak ada item
-                            </td>
-
-                        </tr>
-
-                    @endforelse
-
-                </tbody>
-
-            </table>
-
-        </div>
+        </section>
 
     </div>
 

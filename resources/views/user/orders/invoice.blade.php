@@ -4,260 +4,223 @@
 
 @section('content')
 
-<div class="container mt-4 mb-5">
+<div class="receipt-page">
 
-    <div class="card">
+    <div class="receipt-toolbar">
+        <a href="{{ url()->previous() }}" class="receipt-back">
+            &larr; Daftar Pesanan
+        </a>
 
-        <div class="card-body p-4">
+        <h1>Detail Struk</h1>
 
-            <div class="row">
+        <div class="receipt-toolbar-actions">
 
-                <div class="col-md-6">
-
-                    <h2 class="fw-bold">
-                        SweetBites
-                    </h2>
-
-                    <p class="mb-0">
-                        Toko Kue SweetBites
-                    </p>
-
-                    <p>
-                        Bukti Pembelian
-                    </p>
-
-                </div>
-
-                <div class="col-md-6 text-end">
-
-                    <h4>
-                        INVOICE
-                    </h4>
-
-                    <p class="mb-0">
-                        {{ $order->kode_pesanan }}
-                    </p>
-
-                    <p>
-                        {{ $order->created_at->format('d/m/Y H:i') }}
-                    </p>
-
-                </div>
-
-            </div>
-
-            <hr>
-
-
-            <div class="row mb-4">
-
-                <div class="col-md-6">
-
-                    <strong>Pelanggan</strong>
-
-                    <p class="mb-0">
-                        {{ $order->user->name }}
-                    </p>
-
-                    <p class="mb-0">
-                        {{ $order->user->email }}
-                    </p>
-
-                    <p>
-                        {{ $order->user->no_hp }}
-                    </p>
-
-                </div>
-
-
-                <div class="col-md-6">
-
-                    <strong>Alamat Pengiriman</strong>
-
-                    <p>
-                        {{ $order->alamat_pengirim }}
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <table class="table table-bordered">
-
-                <thead>
-
-                    <tr>
-                        <th>No</th>
-                        <th>Produk</th>
-                        <th>Jumlah</th>
-                        <th>Harga</th>
-                        <th>Subtotal</th>
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    @foreach($order->orderDetails as $detail)
-
-                        <tr>
-
-                            <td>
-                                {{ $loop->iteration }}
-                            </td>
-
-                            <td>
-                                {{ $detail->product->nama_kue ?? '-' }}
-                            </td>
-
-                            <td>
-                                {{ $detail->jumlah }}
-                            </td>
-
-                            <td>
-                                Rp {{ number_format($detail->harga, 0, ',', '.') }}
-                            </td>
-
-                            <td>
-                                Rp {{ number_format($detail->subtotal, 0, ',', '.') }}
-                            </td>
-
-                        </tr>
-
-                    @endforeach
-
-                </tbody>
-
-            </table>
-
-
-            <div class="row mt-4">
-
-                <div class="col-md-7">
-
-                    <p>
-                        <strong>Metode Pembayaran:</strong>
-                        {{ $order->metode_pembayaran }}
-                    </p>
-
-                    <p>
-                        <strong>Metode Pengiriman:</strong>
-                        {{ $order->metode_pengiriman }}
-                    </p>
-
-                    <p>
-                        <strong>Status:</strong>
-
-                        @if($order->status === 'selesai')
-
-                            <span class="badge bg-success">
-                                Selesai
-                            </span>
-
-                        @elseif($order->status === 'batal')
-
-                            <span class="badge bg-danger">
-                                Batal
-                            </span>
-
-                        @elseif($order->status === 'diproses')
-
-                            <span class="badge bg-primary">
-                                Diproses
-                            </span>
-
-                        @elseif($order->status === 'siap')
-
-                            <span class="badge bg-info text-dark">
-                                Siap
-                            </span>
-
-                        @else
-
-                            <span class="badge bg-warning text-dark">
-                                Menunggu
-                            </span>
-
-                        @endif
-
-                    </p>
-
-                </div>
-
-
-                <div class="col-md-5">
-
-                    <div class="border p-3">
-
-                        <h5>
-                            Total Pembayaran
-                        </h5>
-
-                        <h3>
-                            Rp {{ number_format($order->total_harga, 0, ',', '.') }}
-                        </h3>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <hr>
-
-
-            <div class="text-center mt-4">
-
-                <p>
-                    Terima kasih telah berbelanja di SweetBites.
-                </p>
-
-                <button
-                    onclick="window.print()"
-                    class="btn btn-dark"
-                >
-                    Cetak Invoice
-                </button>
-
-                <a
-                    href="{{ route('orders.show', $order->id) }}"
-                    class="btn btn-secondary"
-                >
-                    Kembali
-                </a>
-
-            </div>
-
+            <button type="button" class="receipt-action receipt-print"
+                onclick="window.print()">
+                Cetak Struk Sekarang
+            </button>
         </div>
-
     </div>
 
+    <div class="receipt-paper" id="receipt">
+
+        {{-- HEADER TOKO --}}
+        <header class="receipt-header">
+            <div class="receipt-logo">
+                <img src="{{ asset('images/logotoko1.png') }}"
+                    alt="Logo SweetBites">
+            </div>
+
+            <h2>S W E E T B I T E S</h2>
+            <p class="receipt-tagline">
+                ARTISAN BAKERY &amp; SPECIALTY COOKIES
+            </p>
+
+            <div class="receipt-store-info">
+                <p>SweetBites — Toko Kue dan Bakery</p>
+                <p>Indonesia</p>
+                <p>Terima kasih telah berbelanja di SweetBites.</p>
+            </div>
+        </header>
+
+        <div class="receipt-divider"></div>
+
+        {{-- INFORMASI TRANSAKSI --}}
+        <section class="receipt-information">
+            <div class="receipt-info-row">
+                <span>No. Invoice</span>
+                <strong>{{ $order->kode_pesanan }}</strong>
+            </div>
+
+            <div class="receipt-info-row">
+                <span>Waktu Transaksi</span>
+                <strong>
+                    {{ optional($order->created_at)->format('d/m/Y H:i') ?? '-' }}
+                </strong>
+            </div>
+
+            <div class="receipt-info-row">
+                <span>Pelanggan</span>
+                <strong>{{ $order->user->name ?? '-' }}</strong>
+            </div>
+
+            <div class="receipt-info-row">
+                <span>No. Telepon</span>
+                <strong>{{ $order->user->no_hp ?? '-' }}</strong>
+            </div>
+
+            <div class="receipt-info-row">
+                <span>Alamat Pengiriman</span>
+                <strong>{{ $order->alamat_pengirim ?? '-' }}</strong>
+            </div>
+
+            <div class="receipt-info-row">
+                <span>Metode Pembayaran</span>
+                <strong>
+                    {{ $order->metode_pembayaran ?? '-' }}
+                </strong>
+            </div>
+
+            <div class="receipt-info-row">
+                <span>Status Pesanan</span>
+                <strong class="receipt-status">
+                    {{ ucfirst($order->status ?? '-') }}
+                </strong>
+            </div>
+        </section>
+
+        <div class="receipt-divider"></div>
+
+        {{-- DAFTAR PRODUK --}}
+        <section class="receipt-items">
+            <h3>RINCIAN PESANAN</h3>
+
+            <div class="receipt-table-wrap">
+                <table class="receipt-table">
+                    <thead>
+                        <tr>
+                            <th>Deskripsi Item</th>
+                            <th>Qty</th>
+                            <th>Harga</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @forelse ($order->orderDetails as $detail)
+                        <tr>
+                            <td class="receipt-product-name">
+                                {{ $detail->product->nama_kue ?? 'Produk' }}
+                            </td>
+
+                            <td>
+                                {{ $detail->jumlah ?? 0 }}
+                            </td>
+
+                            <td>
+                                Rp {{ number_format($detail->harga ?? 0, 0, ',', '.') }}
+                            </td>
+
+                            <td>
+                                Rp {{ number_format(
+                                        $detail->subtotal
+                                            ?? (($detail->jumlah ?? 0) * ($detail->harga ?? 0)),
+                                        0, ',', '.'
+                                    ) }}
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="4" class="receipt-empty">
+                                Belum ada rincian produk.
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="receipt-divider"></div>
+
+        {{-- TOTAL --}}
+        <section class="receipt-totals">
+            <div class="receipt-total-row">
+                <span>Total Produk</span>
+                <strong>
+                    Rp {{ number_format(
+                        $order->orderDetails->sum(function ($detail) {
+                            return $detail->subtotal
+                                ?? (($detail->jumlah ?? 0) * ($detail->harga ?? 0));
+                        }),
+                        0, ',', '.'
+                    ) }}
+                </strong>
+            </div>
+
+            <div class="receipt-total-row receipt-grand-total">
+                <span>TOTAL AKHIR</span>
+                <strong>
+                    Rp {{ number_format($order->total_harga ?? 0, 0, ',', '.') }}
+                </strong>
+            </div>
+        </section>
+
+        <div class="receipt-divider"></div>
+
+        {{-- INFORMASI PEMBAYARAN --}}
+        <section class="receipt-payment">
+            <h3>INFORMASI PEMBAYARAN</h3>
+
+            <div class="receipt-info-row">
+                <span>Metode Bayar</span>
+                <strong>{{ $order->metode_pembayaran ?? '-' }}</strong>
+            </div>
+
+            <div class="receipt-info-row">
+                <span>Status Pembayaran</span>
+                <strong>
+                    {{ ucfirst($order->payment->status ?? $order->status ?? '-') }}
+                </strong>
+            </div>
+
+            <div class="receipt-info-row">
+                <span>Total Transaksi</span>
+                <strong>
+                    Rp {{ number_format($order->total_harga ?? 0, 0, ',', '.') }}
+                </strong>
+            </div>
+        </section>
+
+        <div class="receipt-divider"></div>
+
+        {{-- BARCODE DEKORATIF --}}
+        <div class="receipt-barcode-area">
+            <div class="receipt-barcode" aria-label="Kode batang dekoratif"></div>
+
+            <p class="receipt-invoice-code">
+                {{ $order->kode_pesanan }}
+            </p>
+            <small>Nomor referensi pesanan</small>
+        </div>
+
+        {{-- FOOTER STRUK --}}
+        <footer class="receipt-footer">
+            <h3>Terima Kasih atas Pesanan Anda!</h3>
+
+            <p>
+                Setiap gigitan dibuat dengan sepenuh hati.
+                Semoga hari Anda semakin manis bersama SweetBites.
+            </p>
+
+            <div class="receipt-footer-brand">
+                SWEETBITES
+            </div>
+
+            <small>Dokumen transaksi SweetBites</small>
+        </footer>
+
+    </div>
 </div>
-
-
-<style>
-
-@media print {
-
-    nav,
-    .navbar,
-    button,
-    a {
-        display: none !important;
-    }
-
-    body {
-        background: white !important;
-    }
-
-    .card {
-        border: none !important;
-    }
-
-}
-
-</style>
 
 @endsection
