@@ -4,17 +4,6 @@
 
 @section('content')
 <div class="login-page register-page">
-
-    <!-- DEKORASI BACKGROUND -->
-    <div class="bakery-decoration">
-
-        <div class="bakery-star star-one"></div>
-        <div class="bakery-star star-two"></div>
-        <div class="bakery-star star-three"></div>
-        <div class="croissant-left">🥐</div>
-        </div>
-
-
     <!-- BACKGROUND HIJAU -->
     <div class="bakery-bottom"></div>
 

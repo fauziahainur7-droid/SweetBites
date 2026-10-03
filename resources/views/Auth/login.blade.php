@@ -5,18 +5,6 @@
 @section('content')
 
 <div class="login-page">
-
-    <!-- BACKGROUND BAKERY -->
-    <div class="bakery-decoration">
-
-        <div class="bakery-star star-one"></div>
-        <div class="bakery-star star-two"></div>
-        <div class="bakery-star star-three"></div>
-        <div class="bakery-croissant croissant-left">
-            🥐
-        </div>
-    </div>
-
     <!-- FORM LOGIN -->
     <div class="login-card">
 
