@@ -18,7 +18,7 @@
                 <textarea name="deskripsi" class="form-control" rows="3"></textarea>
             </div>
             <button type="submit" class="btn btn-dark">Simpan</button>
-            <a href="{{ route('categories.index') }}" class="btn btn-secondary">Batal</a>
+            <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">Batal</a>
         </form>
     </div>
 </div>
