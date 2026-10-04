@@ -72,7 +72,7 @@
 
                     <!-- FOTO SENDIRI -->
                     <div class="info-image-box">
-                        <img src="{{ asset('images/dapur.jpg') }}" alt="SweetBites">
+                        <img src="{{ asset('images/sweetbites.jpg') }}" alt="SweetBites">
                     </div>
 
                 </div>
