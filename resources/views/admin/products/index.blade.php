@@ -32,27 +32,6 @@
             </div>
 
 
-            <div class="view-switcher">
-
-                <button
-                    type="button"
-                    class="view-button"
-                    id="gridViewButton">
-                    <i class="bi bi-grid-3x3-gap-fill"></i>
-                    Grid
-                </button>
-
-                <button
-                    type="button"
-                    class="view-button active"
-                    id="tableViewButton">
-                    <i class="bi bi-list"></i>
-                    Tabel
-                </button>
-
-            </div>
-
-
             <a
                 href="{{ route('admin.products.create') }}"
                 class="add-product-button">
@@ -285,94 +264,6 @@
 
         {{-- Sidebar kanan --}}
         <aside class="catalog-summary">
-
-            {{-- Ringkasan --}}
-            <section class="summary-section">
-
-                <div class="summary-heading">
-
-                    <h2>
-                        RINGKASAN ETALASE
-                    </h2>
-
-                </div>
-
-                <div class="summary-stats">
-
-                    <div class="summary-stat">
-                        <span>Total Item</span>
-                        <strong>{{ $totalProducts }}</strong>
-                        <small>+ {{ $totalProducts }} Aktif live</small>
-                    </div>
-
-                    <div class="summary-stat warning">
-                        <span>Stok Menipis</span>
-                        <strong>{{ $lowStockProducts }} Item</strong>
-                        <small>Perlu Restock</small>
-                    </div>
-
-                </div>
-            </section>
-
-
-            {{-- Produk terlaris --}}
-            <section class="summary-section best-selling-section">
-
-                <div class="summary-heading">
-
-                    <h2>
-                        KUE TERLARIS PEKAN INI
-                    </h2>
-
-                    <span>
-                        Live Rank
-                    </span>
-
-                </div>
-
-
-                <div class="best-selling-list">
-
-                    @php
-                    $bestSellingProducts = isset($bestSellers)
-                    ? $bestSellers
-                    : $products->take(3);
-                    @endphp
-
-
-                    @foreach($bestSellingProducts as $index => $bestProduct)
-
-                    <div class="best-product">
-
-                        <div class="rank-number">
-                            +{{ $index + 1 }}
-                        </div>
-
-                        <div class="best-product-info">
-
-                            <strong>
-                                {{ $bestProduct->nama_kue }}
-                            </strong>
-
-                            <span>
-                                {{ rand(40, 150) }} terjual ·
-                                Rp {{ number_format($bestProduct->harga, 1, ',', '.') }}jt
-                            </span>
-
-                        </div>
-
-                        <div class="growth">
-                            +{{ 9 + ($index * 3) }}%
-                        </div>
-
-                    </div>
-
-                    @endforeach
-
-                </div>
-
-            </section>
-
 
             {{-- Tips --}}
             <section class="catalog-tip">

@@ -512,23 +512,6 @@
                         </label>
 
 
-                        <div class="notes">
-
-                            <label
-                                class="field-label"
-                                for="notes">
-                                Catatan Internal Admin (Opsional)
-                            </label>
-
-                            <textarea
-                                id="notes"
-                                name="catatan"
-                                rows="3"
-                                placeholder="Tambahkan catatan jika diperlukan..."></textarea>
-
-                        </div>
-
-
                         <button
                             class="verify-button"
                             type="submit">

@@ -1,5 +1,227 @@
+/* =============================================================
+   SWEETBITES — TYPOGRAPHY SYSTEM
+   Arial      = teks isi, paragraf, label, tombol, navigasi
+   Trebuchet MS = judul, subjudul, harga, angka penting
+   ============================================================= */
+
+/* --- 1. BASE: semua elemen inherit Arial dari body --- */
 body {
     background-color: #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+/* --- 2. HEADING UTAMA (h1) → Trebuchet MS bold --- */
+h1 {
+    font-family: "Trebuchet MS", sans-serif;
+    font-weight: 700;
+}
+
+/* --- 3. SUBJUDUL (h2–h6) → Trebuchet MS semibold --- */
+h2, h3, h4, h5, h6 {
+    font-family: "Trebuchet MS", sans-serif;
+    font-weight: 600;
+}
+
+/* --- 4. PARAGRAF, LABEL, TEKS KECIL → Arial (sudah inherit, ini eksplisit) --- */
+p, span, li, td, th, label, small, a {
+    font-family: inherit; /* mewarisi Arial dari body */
+}
+
+/* --- 5. TOMBOL & NAVIGASI → Arial --- */
+button, .btn, .nav-link, input[type="submit"], input[type="button"] {
+    font-family: Arial, sans-serif;
+}
+
+/* --- 6. INPUT & FORM → Arial --- */
+input, textarea, select {
+    font-family: Arial, sans-serif;
+}
+
+/* --- 7. HARGA & ANGKA PENTING → Trebuchet MS --- */
+.harga,
+.katalog-harga,
+.payment-total-amount,
+.payment-account-number,
+.cart-total-left strong,
+.summary-total strong,
+.total-final strong,
+.stat-item strong,
+.stat-number,
+.summary-number,
+.category-product strong,
+.product-price strong,
+.summary-stat strong,
+.orders-stat-card .stat-number {
+    font-family: "Trebuchet MS", sans-serif;
+}
+
+/* -------------------------------------------------------
+   OVERRIDE FONT LAMA → ganti ke Arial / Trebuchet MS
+   Mencakup: Playfair Display, Poppins, Plus Jakarta Sans,
+   Epilogue, Inter, Georgia, Times New Roman, monospace
+   ------------------------------------------------------- */
+
+/* Semua sisa referensi Playfair Display → Trebuchet MS (peran judul/nama) */
+[style*="Playfair Display"],
+.info-title,
+.denah-title,
+.sosmed-text strong,
+.info-text strong,
+.kontak-hero h1,
+.orders-heading h1,
+.empty-orders h3,
+.stat-number,
+.order-number {
+    font-family: "Trebuchet MS", sans-serif !important;
+}
+
+/* Admin dashboard: ganti Poppins → Arial (teks umum), heading tetap Trebuchet MS */
+.admin-dashboard {
+    font-family: Arial, sans-serif !important;
+}
+.admin-dashboard h1,
+.admin-dashboard h2,
+.admin-dashboard h3,
+.admin-dashboard h4,
+.admin-dashboard h5,
+.admin-dashboard h6 {
+    font-family: "Trebuchet MS", sans-serif !important;
+}
+.admin-dashboard .topbar h1 {
+    font-family: "Trebuchet MS", sans-serif !important;
+}
+.admin-dashboard .stat-card-modern .info h3 {
+    font-family: "Trebuchet MS", sans-serif !important;
+}
+
+/* Orders page customer: ganti Plus Jakarta Sans → Arial */
+.orders-page {
+    font-family: Arial, sans-serif !important;
+}
+.orders-search input,
+.orders-filter select,
+.btn-order,
+.pagination-arrow,
+.pagination-number {
+    font-family: Arial, sans-serif !important;
+}
+
+/* Order detail page: ganti Epilogue → Trebuchet MS (judul) / Arial (isi) */
+.order-detail-page {
+    font-family: Arial, sans-serif !important;
+}
+.order-heading h1,
+.reference-code strong,
+.section-title h2,
+.document-card h3,
+.sidebar-heading h3,
+.payment-alert h3,
+.product-text strong,
+.total-final span,
+.total-final strong,
+.meta-content .payment-total {
+    font-family: "Trebuchet MS", sans-serif !important;
+}
+
+/* Catalog admin page: ganti Inter → Arial */
+.catalog-page {
+    font-family: Arial, sans-serif !important;
+}
+.catalog-title h1,
+.empty-product h3 {
+    font-family: "Trebuchet MS", sans-serif !important;
+}
+.product-name-area h3 {
+    font-family: "Trebuchet MS", sans-serif !important;
+}
+.product-price strong {
+    font-family: "Trebuchet MS", sans-serif !important;
+}
+
+/* Category page admin: ganti Georgia / Times New Roman → Trebuchet MS (judul) */
+.category-title h1,
+.category-info h3,
+.category-product strong,
+.summary-number,
+.category-empty h3,
+.category-not-found h3 {
+    font-family: "Trebuchet MS", sans-serif !important;
+}
+
+/* Edit category page: ganti Plus Jakarta Sans / Epilogue → sesuai peran */
+.edit-category-page {
+    font-family: Arial, sans-serif !important;
+}
+.edit-title-row h1,
+.edit-card-title h2,
+.image-placeholder {
+    font-family: "Trebuchet MS", sans-serif !important;
+}
+.input-wrapper input,
+.form-group textarea,
+.remove-image-button,
+.delete-category-button,
+.save-category-button {
+    font-family: Arial, sans-serif !important;
+}
+
+/* Detail pesanan admin: ganti Georgia / Times New Roman → Trebuchet MS (judul/angka) */
+.orders-heading h1 {
+    font-family: "Trebuchet MS", sans-serif !important;
+}
+.stat-number,
+.stat-price {
+    font-family: "Trebuchet MS", sans-serif !important;
+}
+.empty-orders h3 {
+    font-family: "Trebuchet MS", sans-serif !important;
+}
+
+/* Halaman kontak: ganti Playfair Display → Trebuchet MS */
+.kontak-hero h1,
+.info-title,
+.denah-title,
+.info-text strong,
+.sosmed-text strong {
+    font-family: "Trebuchet MS", sans-serif !important;
+}
+
+/* CTA banner: ganti Playfair Display → Trebuchet MS */
+.cta-banner-content h2 {
+    font-family: "Trebuchet MS", sans-serif !important;
+}
+
+/* Login / Register: sudah pakai Trebuchet MS, pastikan konsisten */
+.login-header h1,
+.login-body h2,
+.login-button,
+.bottom-text strong {
+    font-family: "Trebuchet MS", sans-serif !important;
+}
+.login-input label,
+.login-subtitle,
+.register-link,
+.remember-me {
+    font-family: Arial, sans-serif !important;
+}
+
+/* Produk detail (user): ganti Georgia → Trebuchet MS */
+.product-detail-name,
+.product-detail-price {
+    font-family: "Trebuchet MS", sans-serif !important;
+}
+
+/* Kenapa icon: hapus Georgia, pakai Trebuchet MS */
+.kenapa-icon span {
+    font-family: "Trebuchet MS", sans-serif !important;
+}
+
+/* Order number (kode pesanan): tetap monospace untuk keterbacaan kode */
+.order-number {
+    font-family: "Courier New", monospace !important;
+}
+.payment-order-code {
+    font-family: "Courier New", monospace !important;
 }
 
 .navbar {
@@ -23,7 +245,7 @@ body {
 }
 
 .bg-sweetbites .nav-link {
-    font-family: "Trebuchet MS", sans-serif;
+    font-family: Arial, sans-serif;
     color: #66291b !important;
 }
 
@@ -720,7 +942,7 @@ body {
 .kenapa-heading h2 {
     margin: 0 0 10px;
     color: #6f301d;
-    font-family:  "Trebuchet MS", sans-serif;
+    font-family: "Trebuchet MS", sans-serif;
     font-size: 36px;
     font-weight: 700;
 }
@@ -760,7 +982,7 @@ body {
 
 .kenapa-icon span {
     color: #ffffff;
-    font-family: Georgia, "Trebuchet MS", sans-serif;
+    font-family: "Trebuchet MS", sans-serif;
     font-size: 21px;
     font-weight: 700;
 }
@@ -858,48 +1080,6 @@ body {
 }
 
 /* Section Pengalaman */
-.pengalaman-section {
-    padding: 100px 0;
-    background-color: #ffffff;
-}
-
-.pengalaman-wrapper {
-    max-width: 1150px;
-    margin: 0 auto;
-}
-
-/* FOTO ARCH */
-.pengalaman-photos {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-    margin-bottom: -60px; 
-    position: relative;
-    z-index: 2;
-    padding: 0 40px;
-}
-
-.arch-photo {
-    width: 100%;
-    aspect-ratio: 3 / 4;
-    overflow: hidden;
-
-    border-radius: 200px 200px 12px 12px; 
-    box-shadow: 0 15px 40px rgba(45, 80, 22, 0.15);
-
-    transition: transform 0.4s ease;
-}
-
-.arch-photo:hover {
-    transform: translateY(-8px);
-}
-
-.arch-photo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
 
 /* KOTAK BAWAH (Hijau Tua) */
 .pengalaman-section {
@@ -935,6 +1115,10 @@ body {
     border-radius: 200px 200px 0 0;
     overflow: hidden;
     background-color: #f0f0f0;
+}
+
+.arch-photo:hover {
+    transform: translateY(-8px);
 }
 
 .arch-photo img {
@@ -1255,8 +1439,6 @@ body {
         letter-spacing: 3px;
     }
 }
-
-
 
 /* Tentang Kami */
 
@@ -1826,7 +2008,7 @@ body {
 
 .cta-banner-content h2 {
     margin: 0 0 10px;
-    font-family: "Playfair Display", serif;
+    font-family: "Trebuchet MS", sans-serif;
     font-size: 34px;
     font-weight: 800;
     color: #ffffff;
@@ -2270,7 +2452,7 @@ footer {
 .kontak-hero h1 {
     margin: 0 0 15px;
 
-    font-family: 'Playfair Display', serif;
+    font-family: "Trebuchet MS", sans-serif;
     font-size: 48px;
     font-weight: 800;
 
@@ -2312,7 +2494,7 @@ footer {
 .info-title {
     margin: 0 0 12px;
 
-    font-family: 'Playfair Display', serif;
+    font-family: "Trebuchet MS", sans-serif;
     font-size: 32px;
     font-weight: 800;
 
@@ -2385,7 +2567,7 @@ footer {
 }
 
 .info-text strong {
-    font-family: 'Playfair Display', serif;
+    font-family: "Trebuchet MS", sans-serif;
 
     font-size: 16px;
     font-weight: 700;
@@ -2396,10 +2578,10 @@ footer {
 }
 
 
-/* FOTO DAPUR */
+/* FOTO TOKO */
 .info-image-box {
     width: 100%;
-    height: 300px;
+    height: 400px;
 
     margin-top: 25px;
 
@@ -2443,7 +2625,7 @@ footer {
 .denah-title {
     margin: 0 0 20px;
 
-    font-family: 'Playfair Display', serif;
+    font-family: "Trebuchet MS", sans-serif;
     font-size: 22px;
     font-weight: 800;
 
@@ -2711,27 +2893,7 @@ footer {
     }
 }
 
-/* RESPONSIVE */
-@media (max-width: 991px) {
-    .kontak-sosmed-list {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 768px) {
-    .kontak-info-box,
-    .kontak-denah-box {
-        padding: 35px 25px;
-    }
-
-    .info-title {
-        font-size: 26px;
-    }
-
-    .kontak-sosmed-list {
-        grid-template-columns: 1fr;
-    }
-}
+/* Duplikat media query di atas sudah mencakup ini */
 
 @media (max-width: 576px) {
     .kontak-info-box,
@@ -3356,151 +3518,6 @@ footer {
 }
 
 
-/* BACKGROUND */
-
-.bakery-decoration {
-    position: absolute;
-
-    inset: 0;
-
-    pointer-events: none;
-
-    overflow: hidden;
-}
-
-
-/* DEKORASI BINTANG */
-
-.bakery-star {
-    position: absolute;
-
-    width: 45px;
-    height: 45px;
-
-    background: #d9a441;
-
-    transform: rotate(45deg);
-
-    opacity: 0.45;
-}
-
-.star-one {
-    top: 45px;
-    right: 13%;
-}
-
-.star-two {
-    top: 90px;
-    right: 20%;
-
-    transform: rotate(45deg) scale(0.55);
-}
-
-.star-three {
-    top: 25px;
-    right: 27%;
-
-    transform: rotate(45deg) scale(0.35);
-}
-
-
-/* COOKIE KIRI */
-
-.bakery-cookie {
-    position: absolute;
-
-    left: 8%;
-    bottom: 18%;
-
-    width: 95px;
-    height: 95px;
-
-    border-radius: 50%;
-
-    background: #d7a05a;
-
-    border: 7px solid #c88b45;
-
-    transform: rotate(-10deg);
-
-    box-shadow: 0 8px 18px rgba(102, 41, 20, 0.12);
-}
-
-.bakery-cookie span {
-    position: absolute;
-
-    width: 10px;
-    height: 10px;
-
-    border-radius: 50%;
-
-    background: #662914;
-}
-
-.bakery-cookie span:nth-child(1) {
-    top: 20px;
-    left: 23px;
-}
-
-.bakery-cookie span:nth-child(2) {
-    top: 48px;
-    left: 57px;
-}
-
-.bakery-cookie span:nth-child(3) {
-    top: 63px;
-    left: 28px;
-}
-
-
-/* CROISSANT */
-
-.croissant-left {
-    position: absolute;
-
-    left: 17%;
-    bottom: 9%;
-
-    font-size: 65px;
-
-    transform: rotate(-10deg);
-
-    opacity: 0.9;
-}
-
-
-/* CUPCAKE KANAN */
-
-.cupcake-right {
-    position: absolute;
-
-    right: 13%;
-    bottom: 12%;
-
-    font-size: 70px;
-
-    transform: rotate(7deg);
-
-    opacity: 0.9;
-}
-
-
-/* CAKE KANAN */
-
-.cake-right {
-    position: absolute;
-
-    right: 7%;
-    bottom: 22%;
-
-    font-size: 55px;
-
-    transform: rotate(7deg);
-
-    opacity: 0.9;
-}
-
-
 /* LOGIN CARD */
 
 .login-card {
@@ -3771,23 +3788,7 @@ footer {
 /* TABLET */
 
 @media (max-width: 900px) {
-
-    .bakery-cookie {
-        left: 3%;
-    }
-
-    .croissant-left {
-        left: 8%;
-    }
-
-    .cupcake-right {
-        right: 5%;
-    }
-
-    .cake-right {
-        right: 2%;
-    }
-
+    /* bakery-bottom tidak berubah pada tablet */
 }
 
 
@@ -3797,7 +3798,6 @@ footer {
 
     .login-page {
         min-height: 100vh;
-
         padding: 25px 15px;
     }
 
@@ -3807,45 +3807,6 @@ footer {
 
     .login-body {
         padding: 24px;
-    }
-
-    .bakery-cookie {
-        left: -35px;
-        bottom: 15%;
-
-        transform: scale(0.65);
-    }
-
-    .croissant-left {
-        left: 5%;
-        bottom: 5%;
-
-        font-size: 45px;
-    }
-
-    .cupcake-right {
-        right: 2%;
-        bottom: 10%;
-
-        font-size: 50px;
-    }
-
-    .cake-right {
-        right: -10px;
-        bottom: 20%;
-
-        font-size: 40px;
-    }
-
-    .bakery-star {
-        right: 10%;
-    }
-
-    .bottom-cookie,
-    .bottom-bread,
-    .bottom-cupcake,
-    .bottom-cake {
-        display: none;
     }
 
     .bottom-text {
@@ -4532,12 +4493,7 @@ footer {
     padding: 40px 20px 80px;
 }
 
-/* Header cart */
-.cart-header {
-    text-align: center;
-    margin-bottom: 48px;
-}
-
+/* Judul dan breadcrumb */
 .cart-title {
     font-size: 36px;
     font-weight: 700;
@@ -4552,7 +4508,7 @@ footer {
     align-items: center;
     gap: 10px;
     font-size: 14px;
-    font-family: inherit;
+    margin-bottom: 0;
 }
 
 .cart-breadcrumb a {
@@ -4634,14 +4590,17 @@ footer {
     gap: 12px;
 }
 
-.cart-product-img {
-    width: 56px;
-    height: 56px;
-    border-radius: 10px;
+.cart-product-image {
+    width: 64px !important;
+    height: 64px !important;
+    min-width: 64px;
+    max-width: 64px;
     object-fit: cover;
-    background-color: var(--cream);
-    border: 1px solid rgba(166, 106, 61, 0.1);
+    border-radius: 10px;
+    display: block;
+    flex-shrink: 0;
 }
+
 
 .cart-product strong {
     display: block;
@@ -4699,11 +4658,7 @@ footer {
     margin: 0;
 }
 
-/* Tombol hapus X */
-.cart-remove-form {
-    display: inline;
-}
-
+/* Tombol hapus item keranjang */
 .btn-remove-x {
     display: inline-flex;
     align-items: center;
@@ -5394,28 +5349,6 @@ footer {
     box-sizing: border-box;
 
     color: #542718;
-}
-
-.payment-container {
-    width: 100%;
-    max-width: 1100px;
-    margin: 0 auto;
-
-    background: #ffffff;
-
-    border-radius: 16px;
-
-    box-shadow: 0 8px 30px rgba(70, 35, 20, 0.10);
-
-    overflow: hidden;
-
-    border-top: 5px solid #71311f;
-}
-
-.payment-actions {
-    width: calc(100% - 80px);
-    max-width: 1100px;
-    margin: 18px auto 0;
 }
 
 /* Alert di atas */
