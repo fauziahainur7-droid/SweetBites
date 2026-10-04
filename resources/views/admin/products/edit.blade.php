@@ -29,9 +29,12 @@
     </div>
     @endif
 
-    <form action="{{ route('admin.products.update', $product->id) }}"
+    <form id="productEditForm"
+        action="{{ route('admin.products.update', $product->id) }}"
         method="POST"
-        enctype="multipart/form-data">
+        enctype="multipart/form-data"
+        data-original-image="{{ $product->gambar ? asset('storage/products/' . $product->gambar) : '' }}"
+        data-original-name="{{ $product->gambar ? basename($product->gambar) : '' }}">
 
         @csrf
         @method('PUT')
@@ -71,7 +74,7 @@
                         <div class="product-image-preview">
 
                             <img id="previewImage"
-                                src="{{ $product->gambar ? asset('storage/' . $product->gambar) : '' }}"
+                                src="{{ $product->gambar ? asset('storage/products/' . $product->gambar) : '' }}"
                                 alt="Preview produk"
                                 class="product-thumb"
                                 @if (!$product->gambar) hidden @endif>

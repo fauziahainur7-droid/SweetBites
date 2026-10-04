@@ -12,51 +12,50 @@ class ProductController extends Controller
     // ADMIN - daftar produk
     public function index()
     {
-        $products = Product::with('category')
-            ->latest()
-            ->get();
-
+        $products = Product::with('category')->latest()->get();
         $totalProducts = Product::count();
-
         $lowStockProducts = Product::where('stok', '<=', 5)->count();
-
         $categories = Category::withCount('products')->get();
 
-        return view('admin.products.index', compact('products', 'totalProducts', 'lowStockProducts', 'categories'));
+        return view('admin.products.index', compact(
+            'products',
+            'totalProducts',
+            'lowStockProducts',
+            'categories'
+        ));
     }
 
     // ADMIN - form tambah
     public function create()
     {
         $categories = Category::all();
-
         return view('admin.products.create', compact('categories'));
     }
 
     // ADMIN - simpan produk
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $request->validate([
             'kategori_id' => 'required|exists:categories,id',
-            'nama_kue' => 'required|string|max:128',
-            'harga' => 'required|integer|min:0',
-            'stok' => 'required|integer|min:0',
-            'deskripsi' => 'nullable|string',
-            'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'nama_kue'    => 'required|string|max:255',
+            'harga'       => 'required|numeric|min:0',
+            'stok'        => 'required|integer|min:0',
+            'deskripsi'   => 'nullable|string',
+            'gambar'      => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
+
+        $data = $request->only([
+            'kategori_id',
+            'nama_kue',
+            'harga',
+            'stok',
+            'deskripsi',
         ]);
 
         if ($request->hasFile('gambar')) {
-
             $file = $request->file('gambar');
-
-            $filename = time() . '.' .
-                $file->getClientOriginalExtension();
-
-            $file->storeAs(
-                'public/products',
-                $filename
-            );
-
+            $filename = 'product-' . time() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('products', $filename, 'public');
             $data['gambar'] = $filename;
         }
 
@@ -70,7 +69,7 @@ class ProductController extends Controller
     // PUBLIC - detail produk
     public function show(int $id)
     {
-        $product = \App\Models\Product::findOrFail($id);
+        $product = Product::findOrFail($id);
 
         $reviews = \App\Models\Review::with('user')
             ->where('produk_id', $product->id)
@@ -84,13 +83,9 @@ class ProductController extends Controller
     public function edit(int $id)
     {
         $product = Product::findOrFail($id);
-
         $categories = Category::all();
 
-        return view(
-            'admin.products.edit',
-            compact('product', 'categories')
-        );
+        return view('admin.products.edit', compact('product', 'categories'));
     }
 
     // ADMIN - update
@@ -100,31 +95,22 @@ class ProductController extends Controller
 
         $data = $request->validate([
             'kategori_id' => 'required|exists:categories,id',
-            'nama_kue' => 'required|string|max:128',
-            'harga' => 'required|integer|min:0',
-            'stok' => 'required|integer|min:0',
-            'deskripsi' => 'nullable|string',
-            'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'nama_kue'    => 'required|string|max:128',
+            'harga'       => 'required|integer|min:0',
+            'stok'        => 'required|integer|min:0',
+            'deskripsi'   => 'nullable|string',
+            'gambar'      => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         if ($request->hasFile('gambar')) {
-
+            // Hapus gambar lama
             if ($product->gambar) {
-                Storage::delete(
-                    'public/products/' . $product->gambar
-                );
+                Storage::disk('public')->delete('products/' . $product->gambar);
             }
 
             $file = $request->file('gambar');
-
-            $filename = time() . '.' .
-                $file->getClientOriginalExtension();
-
-            $file->storeAs(
-                'public/products',
-                $filename
-            );
-
+            $filename = 'product-' . time() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('products', $filename, 'public');
             $data['gambar'] = $filename;
         }
 
@@ -141,9 +127,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
 
         if ($product->gambar) {
-            Storage::delete(
-                'public/products/' . $product->gambar
-            );
+            Storage::disk('public')->delete('products/' . $product->gambar);
         }
 
         $product->delete();
@@ -152,4 +136,5 @@ class ProductController extends Controller
             ->route('admin.products.index')
             ->with('success', 'Produk berhasil dihapus!');
     }
+
 }

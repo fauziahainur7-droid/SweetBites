@@ -12,8 +12,7 @@
 
             <a
                 class="back-button"
-                href="{{ route('admin.orders.index') }}"
-            >
+                href="{{ route('admin.orders.index') }}">
                 <i class="fa-solid fa-arrow-left"></i>
                 Kembali ke Daftar Pesanan
             </a>
@@ -42,8 +41,7 @@
                 class="icon-button"
                 type="button"
                 title="Refresh"
-                onclick="window.location.reload()"
-            >
+                onclick="window.location.reload()">
                 <i class="fa-solid fa-arrows-rotate"></i>
             </button>
 
@@ -117,13 +115,13 @@
 
                         @if(strtolower($order->metode_pembayaran) === 'cod')
 
-                            <i class="fa-solid fa-money-bill-wave"></i>
-                            COD
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                        COD
 
                         @else
 
-                            <i class="fa-solid fa-building-columns"></i>
-                            {{ $order->metode_pembayaran }}
+                        <i class="fa-solid fa-building-columns"></i>
+                        {{ $order->metode_pembayaran }}
 
                         @endif
 
@@ -139,443 +137,430 @@
         {{-- Pembayaran --}}
         @if(strtolower($order->metode_pembayaran) === 'cod')
 
-            {{-- COD langsung verifikasi --}}
-            <section class="card cod-verification-card">
+        {{-- COD langsung verifikasi --}}
+        <section class="card cod-verification-card">
 
-                <div class="cod-verification-content">
+            <div class="cod-verification-content">
 
-                    <div class="cod-icon">
-                        <i class="fa-solid fa-money-bill-wave"></i>
-                    </div>
+                <div class="cod-icon">
+                    <i class="fa-solid fa-money-bill-wave"></i>
+                </div>
 
-                    <div class="cod-info">
+                <div class="cod-info">
 
-                        <h3>
-                            Pembayaran COD
-                        </h3>
+                    <h3>
+                        Pembayaran COD
+                    </h3>
 
-                        <p>
-                            Pesanan ini menggunakan metode
-                            <strong>Cash on Delivery (COD)</strong>.
-                            Tidak diperlukan bukti pembayaran.
-                            Pesanan dapat langsung diteruskan ke dapur.
-                        </p>
-
-                    </div>
-
-                    <div class="cod-action">
-
-                        <form
-                            action="{{ route('admin.orders.update', $order->id) }}"
-                            method="POST"
-                        >
-                            @csrf
-                            @method('PUT')
-
-                            <input
-                                type="hidden"
-                                name="status"
-                                value="diproses"
-                            >
-
-                            <button
-                                type="submit"
-                                class="verify-button"
-                            >
-                                <i class="fa-solid fa-circle-check"></i>
-                                Verifikasi Pesanan
-                            </button>
-
-                        </form>
-
-                    </div>
+                    <p>
+                        Pesanan ini menggunakan metode
+                        <strong>Cash on Delivery (COD)</strong>.
+                        Tidak diperlukan bukti pembayaran.
+                        Pesanan dapat langsung diteruskan ke dapur.
+                    </p>
 
                 </div>
 
-            </section>
+                <div class="cod-action">
+
+                    <form
+                        action="{{ route('admin.orders.update', $order->id) }}"
+                        method="POST">
+                        @csrf
+                        @method('PUT')
+
+                        <input
+                            type="hidden"
+                            name="status"
+                            value="diproses">
+
+                        <button
+                            type="submit"
+                            class="verify-button">
+                            <i class="fa-solid fa-circle-check"></i>
+                            Verifikasi Pesanan
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </section>
 
         @else
 
-            {{-- Transfer / pembayaran non COD --}}
-            <div class="verification-grid">
+        {{-- Transfer / pembayaran non COD --}}
+        <div class="verification-grid">
 
-                {{-- Bukti Pembayaran --}}
-                <section class="left-column">
+            {{-- Bukti Pembayaran --}}
+            <section class="left-column">
 
-                    <div class="card proof-card">
+                <div class="card proof-card">
 
-                        <div class="card-header">
+                    <div class="card-header">
 
-                            <div class="header-title">
+                        <div class="header-title">
 
-                                <div class="mini-icon">
-                                    <i class="fa-solid fa-receipt"></i>
-                                </div>
+                            <div class="mini-icon">
+                                <i class="fa-solid fa-receipt"></i>
+                            </div>
 
-                                <div>
+                            <div>
 
-                                    <h3>
-                                        Bukti Pembayaran Terunggah
-                                    </h3>
+                                <h3>
+                                    Bukti Pembayaran Terunggah
+                                </h3>
 
-                                    <p>
-                                        File format: image.png
-                                        (Diterima via web)
-                                    </p>
-
-                                </div>
+                                <p>
+                                    File format: image.png
+                                    (Diterima via web)
+                                </p>
 
                             </div>
 
+                        </div>
+
+
+                        @if($order->payment && $order->payment->bukti_pembayaran)
+
+                        <div class="header-actions">
+
+                            <a
+                                href="{{ route('admin.payments.proof', $order->payment->id) }}"
+                                target="_blank">
+                                <i class="fa-solid fa-up-right-from-square"></i>
+                                Buka Penuh
+                            </a>
+
+                            <a
+                                class="dark-btn"
+                                href="{{ route('admin.payments.proof', $order->payment->id) }}"
+                                download>
+                                <i class="fa-solid fa-download"></i>
+                                Unduh
+                            </a>
+
+                        </div>
+
+                        @endif
+
+                    </div>
+
+
+                    <div class="proof-preview">
+
+                        <div class="proof-image-wrap">
 
                             @if($order->payment && $order->payment->bukti_pembayaran)
 
-                                <div class="header-actions">
+                            <img
+                                src="{{ route('admin.payments.proof', $order->payment->id) }}"
+                                alt="Bukti Pembayaran">
 
-                                    <a
-                                        href="{{ route('admin.payments.proof', $order->payment->id) }}"
-                                        target="_blank"
-                                    >
-                                        <i class="fa-solid fa-up-right-from-square"></i>
-                                        Buka Penuh
-                                    </a>
+                            @else
 
-                                    <a
-                                        class="dark-btn"
-                                        href="{{ route('admin.payments.proof', $order->payment->id) }}"
-                                        download
-                                    >
-                                        <i class="fa-solid fa-download"></i>
-                                        Unduh
-                                    </a>
+                            <div class="empty-proof">
 
-                                </div>
+                                <i class="fa-regular fa-image"></i>
+
+                                <strong>
+                                    Belum ada bukti pembayaran
+                                </strong>
+
+                                <span>
+                                    Pelanggan belum mengunggah bukti pembayaran.
+                                </span>
+
+                            </div>
 
                             @endif
 
                         </div>
 
+                    </div>
 
-                        <div class="proof-preview">
 
-                            <div class="proof-image-wrap">
+                    @if($order->payment)
 
-                                @if($order->payment && $order->payment->bukti_pembayaran)
+                    <div class="bank-check">
 
-                                    <img
-                                        src="{{ route('admin.payments.proof', $order->payment->id) }}"
-                                        alt="Bukti Pembayaran"
-                                    >
+                        <div class="check-head">
 
-                                @else
+                            <h4>
+                                DATA MUTASI & PARAMETER COCOK
+                            </h4>
 
-                                    <div class="empty-proof">
-
-                                        <i class="fa-regular fa-image"></i>
-
-                                        <strong>
-                                            Belum ada bukti pembayaran
-                                        </strong>
-
-                                        <span>
-                                            Pelanggan belum mengunggah bukti pembayaran.
-                                        </span>
-
-                                    </div>
-
-                                @endif
-
-                            </div>
+                            <span>
+                                <i class="fa-solid fa-circle-check"></i>
+                                Nominal Sesuai
+                            </span>
 
                         </div>
 
 
-                        @if($order->payment)
+                        <div class="check-grid">
 
-                            <div class="bank-check">
+                            <div class="check-item">
 
-                                <div class="check-head">
+                                <small>
+                                    Bank Tujuan Toko
+                                </small>
 
-                                    <h4>
-                                        DATA MUTASI & PARAMETER COCOK
-                                    </h4>
+                                <strong>
+                                    <i class="fa-solid fa-landmark"></i>
+                                    BCA - 7820199201
+                                </strong>
 
-                                    <span>
-                                        <i class="fa-solid fa-circle-check"></i>
-                                        Nominal Sesuai
-                                    </span>
+                                <p>
+                                    a/n SweetBites Bakery Group
+                                </p>
 
-                                </div>
-
-
-                                <div class="check-grid">
-
-                                    <div class="check-item">
-
-                                        <small>
-                                            Bank Tujuan Toko
-                                        </small>
-
-                                        <strong>
-                                            <i class="fa-solid fa-landmark"></i>
-                                            BCA - 7820199201
-                                        </strong>
-
-                                        <p>
-                                            a/n SweetBites Bakery Group
-                                        </p>
-
-                                    </div>
+                            </div>
 
 
-                                    <div class="check-item">
+                            <div class="check-item">
 
-                                        <small>
-                                            Nama Pengirim
-                                        </small>
+                                <small>
+                                    Nama Pengirim
+                                </small>
 
-                                        <strong>
-                                            <i class="fa-regular fa-user"></i>
-                                            {{ $order->user->name ?? '-' }}
-                                        </strong>
+                                <strong>
+                                    <i class="fa-regular fa-user"></i>
+                                    {{ $order->user->name ?? '-' }}
+                                </strong>
 
-                                        <p>
-                                            Data pembayaran pelanggan
-                                        </p>
+                                <p>
+                                    Data pembayaran pelanggan
+                                </p>
 
-                                    </div>
+                            </div>
 
 
-                                    <div class="check-item">
+                            <div class="check-item">
 
-                                        <small>
-                                            Waktu Transfer
-                                        </small>
+                                <small>
+                                    Waktu Transfer
+                                </small>
 
-                                        <strong>
-                                            <i class="fa-regular fa-calendar-check"></i>
+                                <strong>
+                                    <i class="fa-regular fa-calendar-check"></i>
 
-                                            {{ $order->payment->created_at
+                                    {{ $order->payment->created_at
                                                 ? $order->payment->created_at->format('d M Y, H:i')
                                                 : '-'
                                             }}
-                                            WIB
-                                        </strong>
+                                    WIB
+                                </strong>
 
-                                        <p>
-                                            Waktu pembayaran tercatat
-                                        </p>
+                                <p>
+                                    Waktu pembayaran tercatat
+                                </p>
 
-                                    </div>
+                            </div>
 
 
-                                    <div class="check-item amount">
+                            <div class="check-item amount">
 
-                                        <small>
-                                            Nominal Tertera
-                                        </small>
+                                <small>
+                                    Nominal Tertera
+                                </small>
 
-                                        <strong>
-                                            <i class="fa-solid fa-coins"></i>
+                                <strong>
+                                    <i class="fa-solid fa-coins"></i>
 
-                                            Rp
-                                            {{ number_format(
+                                    Rp
+                                    {{ number_format(
                                                 $order->payment->total_bayar ?? $order->total_harga,
                                                 0,
                                                 ',',
                                                 '.'
                                             ) }}
-                                        </strong>
+                                </strong>
 
-                                        <p>
-                                            <i class="fa-solid fa-check"></i>
-                                            Nominal pembayaran
-                                        </p>
-
-                                    </div>
-
-                                </div>
+                                <p>
+                                    <i class="fa-solid fa-check"></i>
+                                    Nominal pembayaran
+                                </p>
 
                             </div>
 
-                        @endif
+                        </div>
 
                     </div>
 
-                </section>
+                    @endif
+
+                </div>
+
+            </section>
 
 
-                {{-- Tindakan Verifikasi --}}
-                <section class="right-column">
+            {{-- Tindakan Verifikasi --}}
+            <section class="right-column">
 
-                    <div class="card verify-card">
+                <div class="card verify-card">
 
-                        <div class="verify-head">
+                    <div class="verify-head">
 
-                            <h3>
-                                Tindakan Verifikasi
-                            </h3>
-                            
+                        <h3>
+                            Tindakan Verifikasi
+                        </h3>
+
+                    </div>
+
+
+                    @if($order->payment)
+
+                    <form
+                        class="verify-form"
+                        action="{{ route('admin.payments.update-status', $order->payment->id) }}"
+                        method="POST">
+
+                        @csrf
+                        @method('PUT')
+
+
+                        <label class="field-label">
+                            Pilih Status Baru
+                        </label>
+
+
+                        <label class="radio-card selected">
+
+                            <span class="radio-left">
+
+                                <input
+                                    checked
+                                    type="radio"
+                                    name="status"
+                                    value="lunas">
+
+                                <span>
+
+                                    <strong>
+                                        Verifikasi & Terima
+                                    </strong>
+
+                                    <small>
+                                        Dana valid, teruskan pesanan ke dapur
+                                    </small>
+
+                                </span>
+
+                            </span>
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                        </label>
+
+
+                        <label class="radio-card">
+
+                            <span class="radio-left">
+
+                                <input
+                                    type="radio"
+                                    name="status"
+                                    value="verifikasi">
+
+                                <span>
+
+                                    <strong>
+                                        Bukti Tidak Jelas / Buram
+                                    </strong>
+
+                                    <small>
+                                        Pembayaran masih perlu diperiksa
+                                    </small>
+
+                                </span>
+
+                            </span>
+
+                            <i class="fa-solid fa-circle-question"></i>
+
+                        </label>
+
+
+                        <label class="radio-card reject">
+
+                            <span class="radio-left">
+
+                                <input
+                                    type="radio"
+                                    name="status"
+                                    value="gagal">
+
+                                <span>
+
+                                    <strong>
+                                        Tolak Pembayaran
+                                    </strong>
+
+                                    <small>
+                                        Nominal salah atau bukti tidak valid
+                                    </small>
+
+                                </span>
+
+                            </span>
+
+                            <i class="fa-solid fa-circle-xmark"></i>
+
+                        </label>
+
+
+                        <div class="notes">
+
+                            <label
+                                class="field-label"
+                                for="notes">
+                                Catatan Internal Admin (Opsional)
+                            </label>
+
+                            <textarea
+                                id="notes"
+                                name="catatan"
+                                rows="3"
+                                placeholder="Tambahkan catatan jika diperlukan..."></textarea>
+
                         </div>
 
 
-                        @if($order->payment)
+                        <button
+                            class="verify-button"
+                            type="submit">
+                            <i class="fa-solid fa-stamp"></i>
+                            Verifikasi Pembayaran Valid
+                        </button>
 
-                            <form
-                                class="verify-form"
-                                action="{{ route('admin.payments.update-status', $order->payment->id) }}"
-                                method="POST"
-                            >
+                    </form>
 
-                                @csrf
-                                @method('PUT')
+                    @else
 
+                    <div class="empty-payment">
 
-                                <label class="field-label">
-                                    Pilih Status Baru
-                                </label>
+                        <i class="fa-solid fa-circle-exclamation"></i>
 
+                        <strong>
+                            Belum ada data pembayaran
+                        </strong>
 
-                                <label class="radio-card selected">
-
-                                    <span class="radio-left">
-
-                                        <input
-                                            checked
-                                            type="radio"
-                                            name="status"
-                                            value="lunas"
-                                        >
-
-                                        <span>
-
-                                            <strong>
-                                                Verifikasi & Terima
-                                            </strong>
-
-                                            <small>
-                                                Dana valid, teruskan pesanan ke dapur
-                                            </small>
-
-                                        </span>
-
-                                    </span>
-
-                                    <i class="fa-solid fa-circle-check"></i>
-
-                                </label>
-
-
-                                <label class="radio-card">
-
-                                    <span class="radio-left">
-
-                                        <input
-                                            type="radio"
-                                            name="status"
-                                            value="verifikasi"
-                                        >
-
-                                        <span>
-
-                                            <strong>
-                                                Bukti Tidak Jelas / Buram
-                                            </strong>
-
-                                            <small>
-                                                Pembayaran masih perlu diperiksa
-                                            </small>
-
-                                        </span>
-
-                                    </span>
-
-                                    <i class="fa-solid fa-circle-question"></i>
-
-                                </label>
-
-
-                                <label class="radio-card reject">
-
-                                    <span class="radio-left">
-
-                                        <input
-                                            type="radio"
-                                            name="status"
-                                            value="gagal"
-                                        >
-
-                                        <span>
-
-                                            <strong>
-                                                Tolak Pembayaran
-                                            </strong>
-
-                                            <small>
-                                                Nominal salah atau bukti tidak valid
-                                            </small>
-
-                                        </span>
-
-                                    </span>
-
-                                    <i class="fa-solid fa-circle-xmark"></i>
-
-                                </label>
-
-
-                                <div class="notes">
-
-                                    <label
-                                        class="field-label"
-                                        for="notes"
-                                    >
-                                        Catatan Internal Admin (Opsional)
-                                    </label>
-
-                                    <textarea
-                                        id="notes"
-                                        name="catatan"
-                                        rows="3"
-                                        placeholder="Tambahkan catatan jika diperlukan..."
-                                    ></textarea>
-
-                                </div>
-
-
-                                <button
-                                    class="verify-button"
-                                    type="submit"
-                                >
-                                    <i class="fa-solid fa-stamp"></i>
-                                    Verifikasi Pembayaran Valid
-                                </button>
-
-                            </form>
-
-                        @else
-
-                            <div class="empty-payment">
-
-                                <i class="fa-solid fa-circle-exclamation"></i>
-
-                                <strong>
-                                    Belum ada data pembayaran
-                                </strong>
-
-                                <span>
-                                    Pesanan ini belum memiliki data pembayaran.
-                                </span>
-
-                            </div>
-
-                        @endif
+                        <span>
+                            Pesanan ini belum memiliki data pembayaran.
+                        </span>
 
                     </div>
 
-                </section>
+                    @endif
 
-            </div>
+                </div>
+
+            </section>
+
+        </div>
 
         @endif
 
@@ -644,63 +629,73 @@
 
                         @forelse($order->orderDetails as $detail)
 
-                            <tr>
+                        <tr>
 
-                                <td>
+                            <td>
 
-                                    <div class="product">
+                                <div class="product">
 
-                                        <span class="product-icon cake-bg">
-                                            <i class="fa-solid fa-cake-candles"></i>
-                                        </span>
+                                    @if($detail->product && $detail->product->gambar)
 
-                                        <span>
+                                    <img
+                                        src="{{ asset('storage/products/' . $detail->product->gambar) }}"
+                                        alt="{{ $detail->product->nama_kue }}"
+                                        class="product-image">
 
-                                            <strong>
-                                                {{ $detail->product->nama_kue ?? 'Produk' }}
-                                            </strong>
+                                    @else
 
-                                            <small>
-                                                Produk Pesanan
-                                            </small>
+                                    <span class="product-icon cake-bg">
+                                        <i class="fa-solid fa-cake-candles"></i>
+                                    </span>
 
-                                        </span>
+                                    @endif
 
-                                    </div>
+                                    <span>
 
-                                </td>
+                                        <strong>
+                                            {{ $detail->product->nama_kue ?? 'Produk' }}
+                                        </strong>
+
+                                        <small>
+                                            Produk Pesanan
+                                        </small>
+
+                                    </span>
+
+                                </div>
+
+                            </td>
 
 
-                                <td class="center">
-                                    {{ $detail->jumlah }}x
-                                </td>
+                            <td class="center">
+                                {{ $detail->jumlah }}x
+                            </td>
 
 
-                                <td class="right">
-                                    Rp
-                                    {{ number_format($detail->harga, 0, ',', '.') }}
-                                </td>
+                            <td class="right">
+                                Rp
+                                {{ number_format($detail->harga, 0, ',', '.') }}
+                            </td>
 
 
-                                <td class="right total-cell">
-                                    Rp
-                                    {{ number_format($detail->subtotal, 0, ',', '.') }}
-                                </td>
+                            <td class="right total-cell">
+                                Rp
+                                {{ number_format($detail->subtotal, 0, ',', '.') }}
+                            </td>
 
-                            </tr>
+                        </tr>
 
                         @empty
 
-                            <tr>
+                        <tr>
 
-                                <td
-                                    colspan="4"
-                                    class="empty-items"
-                                >
-                                    Tidak ada item pesanan.
-                                </td>
+                            <td
+                                colspan="4"
+                                class="empty-items">
+                                Tidak ada item pesanan.
+                            </td>
 
-                            </tr>
+                        </tr>
 
                         @endforelse
 
@@ -747,8 +742,7 @@
                         <form
                             class="status-controls"
                             action="{{ route('admin.orders.update', $order->id) }}"
-                            method="POST"
-                        >
+                            method="POST">
 
                             @csrf
                             @method('PUT')
@@ -757,36 +751,31 @@
 
                                 <option
                                     value="menunggu"
-                                    {{ $order->status === 'menunggu' ? 'selected' : '' }}
-                                >
+                                    {{ $order->status === 'menunggu' ? 'selected' : '' }}>
                                     Menunggu
                                 </option>
 
                                 <option
                                     value="diproses"
-                                    {{ $order->status === 'diproses' ? 'selected' : '' }}
-                                >
+                                    {{ $order->status === 'diproses' ? 'selected' : '' }}>
                                     Diproses
                                 </option>
 
                                 <option
                                     value="siap"
-                                    {{ $order->status === 'siap' ? 'selected' : '' }}
-                                >
+                                    {{ $order->status === 'siap' ? 'selected' : '' }}>
                                     Siap
                                 </option>
 
                                 <option
                                     value="selesai"
-                                    {{ $order->status === 'selesai' ? 'selected' : '' }}
-                                >
+                                    {{ $order->status === 'selesai' ? 'selected' : '' }}>
                                     Selesai
                                 </option>
 
                                 <option
                                     value="batal"
-                                    {{ $order->status === 'batal' ? 'selected' : '' }}
-                                >
+                                    {{ $order->status === 'batal' ? 'selected' : '' }}>
                                     Batal
                                 </option>
 
