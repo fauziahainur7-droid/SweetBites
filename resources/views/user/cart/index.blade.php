@@ -36,9 +36,10 @@
                             <td>{{ $i + 1 }}</td>
                             <td>
                                 <div class="cart-product">
-                                    <img src="{{ asset('images/' . $cart->product->gambar) }}"
+                                    <img
+                                        src="{{ asset('storage/products/' . $cart->product->gambar) }}"
                                         alt="{{ $cart->product->nama_kue }}"
-                                        class="cart-product-img">
+                                        class="cart-product-image">
                                     <div>
                                         <strong>{{ $cart->product->nama_kue }}</strong>
                                         <small>{{ $cart->product->category->nama_kategori ?? '' }}</small>
@@ -176,42 +177,42 @@
 
 {{-- Script tombol + / − --}}
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.cart-qty').forEach(function (wrapper) {
-        const minusBtn = wrapper.querySelector('.qty-minus');
-        const plusBtn = wrapper.querySelector('.qty-plus');
-        const input = wrapper.querySelector('.qty-input');
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.cart-qty').forEach(function(wrapper) {
+            const minusBtn = wrapper.querySelector('.qty-minus');
+            const plusBtn = wrapper.querySelector('.qty-plus');
+            const input = wrapper.querySelector('.qty-input');
 
-        minusBtn.addEventListener('click', function () {
-            let val = parseInt(input.value) || 1;
-            if (val > 1) {
-                input.value = val - 1;
+            minusBtn.addEventListener('click', function() {
+                let val = parseInt(input.value) || 1;
+                if (val > 1) {
+                    input.value = val - 1;
+                    autoUpdate(input);
+                }
+            });
+
+            plusBtn.addEventListener('click', function() {
+                let val = parseInt(input.value) || 1;
+                let max = parseInt(input.getAttribute('max')) || 999;
+                if (val < max) {
+                    input.value = val + 1;
+                    autoUpdate(input);
+                }
+            });
+
+            input.addEventListener('change', function() {
                 autoUpdate(input);
-            }
+            });
         });
 
-        plusBtn.addEventListener('click', function () {
-            let val = parseInt(input.value) || 1;
-            let max = parseInt(input.getAttribute('max')) || 999;
-            if (val < max) {
-                input.value = val + 1;
-                autoUpdate(input);
-            }
-        });
-
-        input.addEventListener('change', function () {
-            autoUpdate(input);
-        });
+        function autoUpdate(input) {
+            const id = input.getAttribute('data-id');
+            const form = document.querySelector('.cart-update-form-' + id);
+            const hiddenInput = form.querySelector('input[name="jumlah"]');
+            hiddenInput.value = input.value;
+            form.submit();
+        }
     });
-
-    function autoUpdate(input) {
-        const id = input.getAttribute('data-id');
-        const form = document.querySelector('.cart-update-form-' + id);
-        const hiddenInput = form.querySelector('input[name="jumlah"]');
-        hiddenInput.value = input.value;
-        form.submit();
-    }
-});
 </script>
 
 @endsection

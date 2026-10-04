@@ -83,15 +83,6 @@
                     </label>
                 </div>
 
-                {{-- Section: Catatan --}}
-                <div class="checkout-section">
-                    <h2 class="section-title">Catatan (Opsional)</h2>
-                    <textarea name="catatan"
-                              rows="3"
-                              class="form-control"
-                              placeholder="Contoh: Tolong tambahkan kartu ucapan...">{{ old('catatan') }}</textarea>
-                </div>
-
                 {{-- Tombol aksi --}}
                 <div class="checkout-actions">
                     <button type="submit" class="btn-place-order">
