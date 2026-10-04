@@ -221,9 +221,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     @if (!request()->is('admin/*'))
 
-        <footer class="footer">
+        <footer class="footer" style="height: 300px !important; padding: 20px !important;">
 
-            <div class="footer-box">
+            <div class="footer-box" style="height: 250px !important; padding: 20px 30px !important;">
 
                 <div class="sweet-footer-content">
 

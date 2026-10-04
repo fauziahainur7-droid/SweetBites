@@ -79,11 +79,15 @@
 
                 <!-- GAMBAR -->
                 <div class="katalog-image">
-
+                    @if($product->gambar)
                     <img
-                        src="{{ asset('images/' . $product->gambar) }}"
+                        src="{{ asset('storage/products/' . $product->gambar) }}"
                         alt="{{ $product->nama_kue }}">
-
+                    @else
+                    <img
+                        src="{{ asset('images/no-image.png') }}"
+                        alt="Tidak ada gambar">
+                    @endif
                 </div>
 
 

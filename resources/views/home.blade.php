@@ -145,295 +145,278 @@
 
             <div class="carousel-inner">
 
-                <!-- SLIDE 1 -->
+                <!-- SLIDE 1 — UNGGULAN: BISCOFF LOTUS COOKIES     -->
                 <div class="carousel-item active">
                     <div class="row justify-content-center align-items-center">
 
-                        <!-- KIRI -->
+                        <!-- KIRI: Choco Chip -->
                         <div class="col-md-3">
                             <div class="produk-card produk-samping">
-
                                 <div class="produk-image">
-                                    <img src="{{ asset('images/products/lotus.jpg') }}"
-                                        alt="Nutella Stuffed Cookies">
+                                    <img src="{{ asset('images/products/Mini Cheesecake Strawberry.jpg') }}"
+                                        alt="Mini Cheesecake Strawberry">
                                 </div>
-
                                 <div class="produk-info">
-                                    <h5>Biscoff Lotus Cookies</h5>
+                                    <h5>Mini Cheesecake Strawberry</h5>
                                     <p class="rating">⭐ 4.5 (0)</p>
-                                    <p class="harga">Rp 72.000</p>
-
-                                    <a href="#" class="btn-beli">
-                                        Beli
-                                    </a>
+                                    <p class="harga">Rp 32.000</p>
+                                    <a href="#" class="btn-beli">Beli</a>
                                 </div>
-
                             </div>
                         </div>
 
-                        <!-- TENGAH -->
+                        <!-- TENGAH: Biscoff Lotus (UNGGULAN) -->
                         <div class="col-md-5">
                             <div class="produk-card produk-tengah">
-
-                                <div class="produk-image">
-                                    <img src="{{ asset('images/products/cokie.jpg') }}"
-                                        alt="Choco Chip Sea Salt Cookies">
-                                </div>
-
-                                <div class="produk-info">
-                                    <h4>Choco Chip Sea Salt Cookies</h4>
-                                    <p class="rating">⭐ 4.5 (0)</p>
-                                    <p class="harga">Rp 65.000</p>
-
-                                    <a href="#" class="btn-beli">
-                                        Beli
-                                    </a>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <!-- KANAN -->
-                        <div class="col-md-3">
-                            <div class="produk-card produk-samping">
-
-                                <div class="produk-image">
-                                    <img src="{{ asset('images/products/matcha.jpg') }}"
-                                        alt="Matcha Almond Cookies">
-                                </div>
-
-                                <div class="produk-info">
-                                    <h5>Matcha Almond Cookies</h5>
-                                    <p class="rating">⭐ 4.5 (0)</p>
-                                    <p class="harga">Rp 70.000</p>
-
-                                    <a href="#" class="btn-beli">
-                                        Beli
-                                    </a>
-                                </div>
-
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-
-                <!-- SLIDE 2 -->
-                <div class="carousel-item">
-                    <div class="row justify-content-center align-items-center">
-
-                        <!-- KIRI -->
-                        <div class="col-md-3">
-                            <div class="produk-card produk-samping">
-
-                                <div class="produk-image">
-                                    <img src="{{ asset('images/products/cokie.jpg') }}"
-                                        alt="Choco Chip Sea Salt Cookies">
-                                </div>
-
-                                <div class="produk-info">
-                                    <h5>Choco Chip Sea Salt Cookies</h5>
-                                    <p class="rating">⭐ 4.5 (0)</p>
-                                    <p class="harga">Rp 65.000</p>
-
-                                    <a href="#" class="btn-beli">
-                                        Beli
-                                    </a>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <!-- TENGAH -->
-                        <div class="col-md-5">
-                            <div class="produk-card produk-tengah">
-
-                                <div class="produk-image">
-                                    <img src="{{ asset('images/products/matcha.jpg') }}"
-                                        alt="Matcha Almond Cookies">
-                                </div>
-
-                                <div class="produk-info">
-                                    <h4>Matcha Almond Cookies</h4>
-                                    <p class="rating">⭐ 4.5 (0)</p>
-                                    <p class="harga">Rp 70.000</p>
-
-                                    <a href="#" class="btn-beli">
-                                        Beli
-                                    </a>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <!-- KANAN -->
-                        <div class="col-md-3">
-                            <div class="produk-card produk-samping">
-
-                                <div class="produk-image">
-                                    <img src="{{ asset('images/products/redvelvet.jpg') }}"
-                                        alt="Red Velvet Cookies">
-                                </div>
-
-                                <div class="produk-info">
-                                    <h5>Red Velvet Cookies</h5>
-                                    <p class="rating">⭐ 4.5 (0)</p>
-                                    <p class="harga">Rp 72.000</p>
-
-                                    <a href="#" class="btn-beli">
-                                        Beli
-                                    </a>
-                                </div>
-
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-
-                <!-- SLIDE 3 -->
-                <div class="carousel-item">
-                    <div class="row justify-content-center align-items-center">
-
-                        <!-- KIRI -->
-                        <div class="col-md-3">
-                            <div class="produk-card produk-samping">
-
-                                <div class="produk-image">
-                                    <img src="{{ asset('images/products/matcha.jpg') }}"
-                                        alt="Matcha Almond Cookies">
-                                </div>
-
-                                <div class="produk-info">
-                                    <h5>Matcha Almond Cookies</h5>
-                                    <p class="rating">⭐ 4.5 (0)</p>
-                                    <p class="harga">Rp 70.000</p>
-
-                                    <a href="#" class="btn-beli">
-                                        Beli
-                                    </a>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <!-- TENGAH -->
-                        <div class="col-md-5">
-                            <div class="produk-card produk-tengah">
-
-                                <div class="produk-image">
-                                    <img src="{{ asset('images/products/redvelvet.jpg') }}"
-                                        alt="Red Velvet Cookies">
-                                </div>
-
-                                <div class="produk-info">
-                                    <h4>Red Velvet Cookies</h4>
-                                    <p class="rating">⭐ 4.5 (0)</p>
-                                    <p class="harga">Rp 72.000</p>
-
-                                    <a href="#" class="btn-beli">
-                                        Beli
-                                    </a>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <!-- KANAN -->
-                        <div class="col-md-3">
-                            <div class="produk-card produk-samping">
-
                                 <div class="produk-image">
                                     <img src="{{ asset('images/products/lotus.jpg') }}"
                                         alt="Biscoff Lotus Cookies">
                                 </div>
-
-                                <div class="produk-info">
-                                    <h5>Biscoff Lotus Cookies</h5>
-                                    <p class="rating">⭐ 4.5 (0)</p>
-                                    <p class="harga">Rp 72.000</p>
-
-                                    <a href="#" class="btn-beli">
-                                        Beli
-                                    </a>
-                                </div>
-
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-
-                <!-- SLIDE 4 -->
-                <div class="carousel-item">
-                    <div class="row justify-content-center align-items-center">
-
-                        <!-- KIRI -->
-                        <div class="col-md-3">
-                            <div class="produk-card produk-samping">
-
-                                <div class="produk-image">
-                                    <img src="{{ asset('images/products/redvelvet.jpg') }}"
-                                        alt="Red Velvet Cookies">
-                                </div>
-
-                                <div class="produk-info">
-                                    <h5>Red Velvet Cookies</h5>
-                                    <p class="rating">⭐ 4.5 (0)</p>
-                                    <p class="harga">Rp 72.000</p>
-
-                                    <a href="#" class="btn-beli">
-                                        Beli
-                                    </a>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <!-- TENGAH -->
-                        <div class="col-md-5">
-                            <div class="produk-card produk-tengah">
-
-                                <div class="produk-image">
-                                    <img src="{{ asset('images/products/lotus.jpg') }}"
-                                        alt="Biscoff Lotus Cookies">
-                                </div>
-
                                 <div class="produk-info">
                                     <h4>Biscoff Lotus Cookies</h4>
                                     <p class="rating">⭐ 4.5 (0)</p>
                                     <p class="harga">Rp 72.000</p>
-
-                                    <a href="#" class="btn-beli">
-                                        Beli
-                                    </a>
+                                    <a href="#" class="btn-beli">Beli</a>
                                 </div>
-
                             </div>
                         </div>
 
-                        <!-- KANAN -->
+                        <!-- KANAN: Matcha -->
                         <div class="col-md-3">
                             <div class="produk-card produk-samping">
-
                                 <div class="produk-image">
-                                    <img src="{{ asset('images/products/cokie.jpg') }}"
-                                        alt="Choco Chip Sea Salt Cookies">
+                                    <img src="{{ asset('images/products/caramel brownies.jpg') }}"
+                                        alt="Caramel Brownies">
                                 </div>
-
                                 <div class="produk-info">
-                                    <h5>Choco Chip Sea Salt Cookies</h5>
+                                    <h5>Caramel Brownies</h5>
                                     <p class="rating">⭐ 4.5 (0)</p>
-                                    <p class="harga">Rp 65.000</p>
-
-                                    <a href="#" class="btn-beli">
-                                        Beli
-                                    </a>
+                                    <p class="harga">Rp 62.000</p>
+                                    <a href="#" class="btn-beli">Beli</a>
                                 </div>
+                            </div>
+                        </div>
 
+                    </div>
+                </div>
+
+
+                <!-- SLIDE 2 — UNGGULAN: CARAMEL BROWNIES           -->
+                <div class="carousel-item">
+                    <div class="row justify-content-center align-items-center">
+
+                        <!-- KIRI: Fudgy Brownies -->
+                        <div class="col-md-3">
+                            <div class="produk-card produk-samping">
+                                <div class="produk-image">
+                                    <img src="{{ asset('images/products/lotus.jpg') }}"
+                                        alt="Biscoff Lotus Cookies">
+                                </div>
+                                <div class="produk-info">
+                                    <h5>Biscoff Lotus Cookies</h5>
+                                    <p class="rating">⭐ 4.5 (0)</p>
+                                    <p class="harga">Rp 72.000</p>
+                                    <a href="#" class="btn-beli">Beli</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TENGAH: Caramel Brownies (UNGGULAN) -->
+                        <div class="col-md-5">
+                            <div class="produk-card produk-tengah">
+                                <div class="produk-image">
+                                    <img src="{{ asset('images/products/caramel brownies.jpg') }}"
+                                        alt="Caramel Brownies">
+                                </div>
+                                <div class="produk-info">
+                                    <h4>Caramel Brownies</h4>
+                                    <p class="rating">⭐ 4.5 (0)</p>
+                                    <p class="harga">Rp 62.000</p>
+                                    <a href="#" class="btn-beli">Beli</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- KANAN:Pistachio Croissan -->
+                        <div class="col-md-3">
+                            <div class="produk-card produk-samping">
+                                <div class="produk-image">
+                                    <img src="{{ asset('images/products/Pistachio Croissant.jpg') }}"
+                                        alt="Pistachio Croissant">
+                                </div>
+                                <div class="produk-info">
+                                    <h5>Pistachio Croissan</h5>
+                                    <p class="rating">⭐ 4.5 (0)</p>
+                                    <p class="harga">Rp 35.000</p>
+                                    <a href="#" class="btn-beli">Beli</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- SLIDE 3 — UNGGULAN: PISTACHIO CROISSANT        -->
+                <div class="carousel-item">
+                    <div class="row justify-content-center align-items-center">
+
+                        <!-- KIRI: Caramel Brownies -->
+                        <div class="col-md-3">
+                            <div class="produk-card produk-samping">
+                                <div class="produk-image">
+                                    <img src="{{ asset('images/products/Caramel Brownies.jpg') }}"
+                                        alt="Caramel Brownies">
+                                </div>
+                                <div class="produk-info">
+                                    <h5>Caramel Brownies</h5>
+                                    <p class="rating">⭐ 4.5 (0)</p>
+                                    <p class="harga">Rp 62.000</p>
+                                    <a href="#" class="btn-beli">Beli</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TENGAH: Pistachio Croissant (UNGGULAN) -->
+                        <div class="col-md-5">
+                            <div class="produk-card produk-tengah">
+                                <div class="produk-image">
+                                    <img src="{{ asset('images/products/Pistachio Croissant.jpg') }}"
+                                        alt="Pistachio Croissant">
+                                </div>
+                                <div class="produk-info">
+                                    <h4>Pistachio Croissant</h4>
+                                    <p class="rating">⭐ 4.5 (0)</p>
+                                    <p class="harga">Rp 35.000</p>
+                                    <a href="#" class="btn-beli">Beli</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- KANAN: Tiramisu Luxury Box -->
+                        <div class="col-md-3">
+                            <div class="produk-card produk-samping">
+                                <div class="produk-image">
+                                    <img src="{{ asset('images/products/Tiramisu Luxury Box.jpg') }}"
+                                        alt="Tiramisu Luxury Box">
+                                </div>
+                                <div class="produk-info">
+                                    <h5>Tiramisu Luxury Box</h5>
+                                    <p class="rating">⭐ 4.5 (0)</p>
+                                    <p class="harga">Rp 35.000</p>
+                                    <a href="#" class="btn-beli">Beli</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <!-- SLIDE 4 — UNGGULAN: TIRAMISU LUXURY BOX        -->
+                <div class="carousel-item">
+                    <div class="row justify-content-center align-items-center">
+
+                        <!-- KIRI: Pistachio Croissant -->
+                        <div class="col-md-3">
+                            <div class="produk-card produk-samping">
+                                <div class="produk-image">
+                                    <img src="{{ asset('images/products/Pistachio Croissant.jpg') }}"
+                                        alt="Pistachio Croissant">
+                                </div>
+                                <div class="produk-info">
+                                    <h5>Pistachio Croissant</h5>
+                                    <p class="rating">⭐ 4.5 (0)</p>
+                                    <p class="harga">Rp 35.000</p>
+                                    <a href="#" class="btn-beli">Beli</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TENGAH: Tiramisu Luxury Box (UNGGULAN) -->
+                        <div class="col-md-5">
+                            <div class="produk-card produk-tengah">
+                                <div class="produk-image">
+                                    <img src="{{ asset('images/products/Tiramisu Luxury Box.jpg') }}"
+                                        alt="Tiramisu Luxury Box">
+                                </div>
+                                <div class="produk-info">
+                                    <h4>Tiramisu Luxury Box</h4>
+                                    <p class="rating">⭐ 4.5 (0)</p>
+                                    <p class="harga">Rp 52.000</p>
+                                    <a href="#" class="btn-beli">Beli</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- KANAN: Mini Cheesecake Strawberry -->
+                        <div class="col-md-3">
+                            <div class="produk-card produk-samping">
+                                <div class="produk-image">
+                                    <img src="{{ asset('images/products/Mini Cheesecake Strawberry.jpg') }}"
+                                        alt="Mini Cheesecake Strawberry">
+                                </div>
+                                <div class="produk-info">
+                                    <h5>Mini Cheesecake Strawberry</h5>
+                                    <p class="rating">⭐ 4.5 (0)</p>
+                                    <p class="harga">Rp 32.000</p>
+                                    <a href="#" class="btn-beli">Beli</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <!-- SLIDE 5 — UNGGULAN: MINI CHEESECAKE STRAWBERRY -->
+                <div class="carousel-item">
+                    <div class="row justify-content-center align-items-center">
+
+                        <!-- KIRI: Tiramisu Luxury Box -->
+                        <div class="col-md-3">
+                            <div class="produk-card produk-samping">
+                                <div class="produk-image">
+                                    <img src="{{ asset('images/products/Tiramisu Luxury Box.jpg') }}"
+                                        alt="Tiramisu Luxury Box">
+                                </div>
+                                <div class="produk-info">
+                                    <h5>Tiramisu Luxury Box</h5>
+                                    <p class="rating">⭐ 4.5 (0)</p>
+                                    <p class="harga">Rp 52.000</p>
+                                    <a href="#" class="btn-beli">Beli</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TENGAH: Mini Cheesecake Strawberry (UNGGULAN) -->
+                        <div class="col-md-5">
+                            <div class="produk-card produk-tengah">
+                                <div class="produk-image">
+                                    <img src="{{ asset('images/products/Mini Cheesecake Strawberry.jpg') }}"
+                                        alt="Mini Cheesecake Strawberry">
+                                </div>
+                                <div class="produk-info">
+                                    <h4>Mini Cheesecake Strawberry</h4>
+                                    <p class="rating">⭐ 4.5 (0)</p>
+                                    <p class="harga">Rp 32.000</p>
+                                    <a href="#" class="btn-beli">Beli</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- KANAN: Biscoff Lotus Cookies -->
+                        <div class="col-md-3">
+                            <div class="produk-card produk-samping">
+                                <div class="produk-image">
+                                    <img src="{{ asset('images/products/lotus.jpg') }}"
+                                        alt="Biscoff Lotus Cookies">
+                                </div>
+                                <div class="produk-info">
+                                    <h5>Biscoff Lotus Cookies</h5>
+                                    <p class="rating">⭐ 4.5 (0)</p>
+                                    <p class="harga">Rp 29.000</p>
+                                    <a href="#" class="btn-beli">Beli</a>
+                                </div>
                             </div>
                         </div>
 
@@ -489,6 +472,11 @@
                 <button type="button"
                     data-bs-target="#produkCarousel"
                     data-bs-slide-to="3">
+                </button>
+
+                <button type="button"
+                    data-bs-target="#produkCarousel"
+                    data-bs-slide-to="4">
                 </button>
 
             </div>
@@ -627,7 +615,7 @@
     <!-- KOTAK HIJAU - FULL WIDTH -->
     <div class="pengalaman-content">
         <div class="container content-inner">
-            
+
             <h2 class="pengalaman-title">
                 Dengan pengalaman kami,<br>
                 kami siap melayani Anda

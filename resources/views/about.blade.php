@@ -55,19 +55,19 @@
 
                 <!-- FOTO KIRI -->
                 <div class="visi-photo photo-left">
-                    <img src="{{ asset('images/visi-kue-1.jpg') }}"
+                    <img src="{{ asset('images/visi-kue1.jpg') }}"
                          alt="Kue SweetBites">
                 </div>
 
                 <!-- FOTO UTAMA -->
                 <div class="visi-photo photo-main">
-                    <img src="{{ asset('images/visi-kue-2.jpg') }}"
+                    <img src="{{ asset('images/visi-kue2.jpg') }}"
                          alt="Produk SweetBites">
                 </div>
 
                 <!-- FOTO KANAN -->
                 <div class="visi-photo photo-right">
-                    <img src="{{ asset('images/visi-kue-3.jpg') }}"
+                    <img src="{{ asset('images/visi-kue3.jpg') }}"
                          alt="Aneka Kue SweetBites">
                 </div>
 
